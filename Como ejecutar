@@ -1,0 +1,29 @@
+con este codigo se ejecuta:
+mvn compile exec:java "-Dexec.mainClass=usc.edu.Main"
+si sale error posiblemente con esto se solucione:
+dir
+cd .\TowerDefense_Avance_Proyecto2\
+dir
+cd .\towerdefense
+dir
+intentar con cualquiera de esas deberia salir algo asi:
+PS C:\Users\Usuario\Downloads\TowerDefense_Avance_Proyecto2> cd .\towerdefense
+>> dir
+
+
+    Directorio: C:\Users\Usuario\Downloads\TowerDefense_Avance_Proyecto2\towerdefense
+
+
+Mode                 LastWriteTime         Length Name                                                                                                               
+----                 -------------         ------ ----                                                                                                               
+d-----      20/05/2026  9:04 p. m.                src                                                                                                                
+d-----     20/05/2026  10:33 p. m.                target                                                                                                             
+-a----      20/05/2026  5:31 p. m.           1433 pom.xml                                                                                                            
+
+
+PS C:\Users\Usuario\Downloads\TowerDefense_Avance_Proyecto2\towerdefense> 
+y si no funciona usar:
+cd C:\Users\Usuario\Downloads\Proyecto-final-apo2-master
+cd .\Proyecto-final-apo2-master\
+dir
+mvn compile exec:java "-Dexec.mainClass=usc.edu.Main"
