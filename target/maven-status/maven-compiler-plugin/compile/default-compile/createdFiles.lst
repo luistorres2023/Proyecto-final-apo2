@@ -1,4 +1,5 @@
 usc\edu\Main.class
+usc\edu\MedievalPanel.class
 usc\edu\FastEnemy.class
 usc\edu\TankEnemy.class
 usc\edu\StartMenu.class
@@ -9,6 +10,7 @@ usc\edu\Tower.class
 usc\edu\WaveMenu.class
 usc\edu\SlowDownTower.class
 usc\edu\InfoWindow.class
+usc\edu\MedievalFont.class
 usc\edu\NormalEnemy.class
 usc\edu\Bullet.class
 usc\edu\SoundManager.class
