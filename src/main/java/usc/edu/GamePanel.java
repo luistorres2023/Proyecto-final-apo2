@@ -65,6 +65,7 @@ public class GamePanel extends JPanel implements Runnable, MouseListener, MouseM
 
     int money = 200;
     double lives = 10;
+    int maxWave = -1;
     int wave = 1;
 
     long lastSpawn = 0;
@@ -78,11 +79,13 @@ public class GamePanel extends JPanel implements Runnable, MouseListener, MouseM
     Rectangle resumeButton = new Rectangle(WIDTH / 2 - 100, 220, 200, 50);
     Rectangle restartButton = new Rectangle(WIDTH / 2 - 100, 300, 200, 50);
     Rectangle exitButton = new Rectangle(WIDTH / 2 - 100, 380, 200, 50);
+    
 
     public static ArrayList<Point> pathPoints =
             new ArrayList<>();
-    public GamePanel() {
+    public GamePanel(int maxWave) {
         instance = this;
+        this.maxWave = maxWave;
         music.playMusic("/assets/music/background.wav");
     setPreferredSize(new Dimension(WIDTH, HEIGHT));
 
@@ -290,13 +293,29 @@ public class GamePanel extends JPanel implements Runnable, MouseListener, MouseM
         bulletsToAdd.clear();
 
 
-        if (enemiesSpawned >= enemiesPerWave
-                && enemies.isEmpty()) {
+        bullets.addAll(bulletsToAdd);
+        bulletsToAdd.clear();
 
-            wave++;
+        if(enemiesSpawned >= enemiesPerWave && enemies.isEmpty()) {
 
-            enemiesPerWave += 4;
-            enemiesSpawned = 0;
+        wave++;
+
+        if(maxWave != -1 && wave > maxWave) {
+
+        JOptionPane.showMessageDialog(this,"VICTORY!");
+        new MainMenu();
+        javax.swing.SwingUtilities.getWindowAncestor(this).dispose();
+        return;
+    }
+
+        enemiesPerWave += 4;
+        enemiesSpawned = 0;
+        }
+
+        if(lives <= 0) {
+
+        JOptionPane.showMessageDialog(this,"GAME OVER");
+        System.exit(0);
         }
 
         if (lives <= 0) {
@@ -483,13 +502,20 @@ protected void paintComponent(Graphics g) {
     }
 
     public void resetGame() {
+
     enemies.clear();
     towers.clear();
     bullets.clear();
+    enemiesToAdd.clear();
+    enemiesToRemove.clear();
+    bulletsToAdd.clear();
+
     map = new int[ROWS][COLS];
+
     createMap();
     createPath();
     createLavaBlocks();
+
     money = 200;
     lives = 10;
     wave = 1;
@@ -529,7 +555,8 @@ public void mousePressed(MouseEvent e) {
         }
 
         if (exitButton.contains(p)) {
-            System.exit(0);
+            new MainMenu();
+                javax.swing.SwingUtilities.getWindowAncestor(this).dispose();
         }
 
         return;
