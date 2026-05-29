@@ -1,5 +1,4 @@
 package usc.edu;
-
 import java.awt.*;
 import javax.swing.*;
 

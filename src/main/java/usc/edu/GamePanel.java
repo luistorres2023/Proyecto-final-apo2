@@ -13,14 +13,15 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
-
+import java.awt.Toolkit;
 import javax.imageio.ImageIO;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
+
 public class GamePanel extends JPanel implements Runnable, MouseListener, MouseMotionListener, KeyListener {
     
-    final int WIDTH = 960;
+    final int WIDTH = 1280;
     final int HEIGHT = 720;
     final int TILE_SIZE = 64;
     final int ROWS = HEIGHT / TILE_SIZE;
@@ -87,19 +88,19 @@ public class GamePanel extends JPanel implements Runnable, MouseListener, MouseM
         instance = this;
         this.maxWave = maxWave;
         music.playMusic("/assets/music/background.wav");
-    setPreferredSize(new Dimension(WIDTH, HEIGHT));
 
-        setPreferredSize(
- new Dimension(WIDTH, HEIGHT));
+        setPreferredSize( new Dimension(WIDTH, HEIGHT));
 
         addMouseListener(this);
         addMouseMotionListener(this);
         addKeyListener(this);
         setFocusable(true);
+        requestFocusInWindow();
+        setBackground(Color.BLACK);
         createMap();
         createPath();
         createLavaBlocks();
-        loadImages();;
+        loadImages();
         
 
         gameThread = new Thread(this);
@@ -292,10 +293,6 @@ public class GamePanel extends JPanel implements Runnable, MouseListener, MouseM
         bullets.addAll(bulletsToAdd);
         bulletsToAdd.clear();
 
-
-        bullets.addAll(bulletsToAdd);
-        bulletsToAdd.clear();
-
         if(enemiesSpawned >= enemiesPerWave && enemies.isEmpty()) {
 
         wave++;
@@ -310,12 +307,6 @@ public class GamePanel extends JPanel implements Runnable, MouseListener, MouseM
 
         enemiesPerWave += 4;
         enemiesSpawned = 0;
-        }
-
-        if(lives <= 0) {
-
-        JOptionPane.showMessageDialog(this,"GAME OVER");
-        System.exit(0);
         }
 
         if (lives <= 0) {
@@ -407,10 +398,14 @@ protected void paintComponent(Graphics g) {
 
     if (paused) {
         drawPauseMenu(g2);
+        Toolkit.getDefaultToolkit().sync();
     }
 }
 
     public void drawMap(Graphics2D g2) {
+    if(grassImg == null || pathImg == null || LavaImg == null){
+    return;
+}
 
     for(int row = 0; row < ROWS; row++) {
 
@@ -432,7 +427,9 @@ protected void paintComponent(Graphics g) {
                 g2.drawImage(LavaImg,x,y,TILE_SIZE,TILE_SIZE,null);
             }
         }
-    }g2.setColor(Color.WHITE);
+    }
+
+         g2.setColor(Color.WHITE);
 }
 
     public void drawUI(Graphics2D g2) {
