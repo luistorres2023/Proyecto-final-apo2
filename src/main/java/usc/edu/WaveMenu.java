@@ -38,7 +38,15 @@ public class WaveMenu extends JFrame {
     public WaveMenu() {
 
         loadRecords();
-
+        loadInfinite();
+        for (int i = 0; i < 4; i++) {
+    System.out.println(
+        infScore[i] + " " +
+        infWave[i] + " " +
+        infTime[i] + " " +
+        infLives[i]
+    );
+}
         try {
             URL url = getClass().getResource("/assets/ui/menu.png");
             if (url != null) {
@@ -117,42 +125,53 @@ public class WaveMenu extends JFrame {
    
     private void drawTable(Graphics2D g2) {
 
-        int baseX = 450, baseY = 90;
+    int baseX = 450, baseY = 90;
 
-        g2.setFont(MedievalFont.getFont(25f));
-        g2.setColor(Color.BLACK);
-        g2.drawString("CLASIFICACION", baseX, baseY);
+    int width = 420;
+    int height = 240;
 
-        g2.setFont(MedievalFont.getFont(20f));
-        g2.setColor(Color.WHITE);
+    g2.setColor(new Color(0, 0, 0, 120));
+    g2.fillRect(baseX - 20, baseY + 20, width, height);
 
-        g2.drawRect(baseX - 20, baseY + 20, 420, 240);
+    g2.setFont(MedievalFont.getFont(25f));
+    g2.setColor(Color.BLACK);
+    g2.drawString("CLASIFICACION", baseX, baseY);
 
-        g2.drawLine(baseX + 60, baseY + 20, baseX + 60, baseY + 260);
-        g2.drawLine(baseX + 170, baseY + 20, baseX + 170, baseY + 260);
-        g2.drawLine(baseX + 290, baseY + 20, baseX + 290, baseY + 260);
+    g2.setFont(MedievalFont.getFont(20f));
+    g2.setColor(Color.WHITE);
 
-        g2.drawLine(baseX - 20, baseY + 60, baseX + 400, baseY + 60);
-        g2.drawLine(baseX - 20, baseY + 110, baseX + 400, baseY + 110);
-        g2.drawLine(baseX - 20, baseY + 160, baseX + 400, baseY + 160);
-        g2.drawLine(baseX - 20, baseY + 210, baseX + 400, baseY + 210);
-        g2.drawString("Wave", baseX + 10, baseY + 50);
-g2.drawString("Record", baseX + 80, baseY + 50);
-g2.drawString("Tiempo", baseX + 190, baseY + 50);
-g2.drawString("Vidas", baseX + 320, baseY + 50);
-        
-        drawRow(g2, "10", record10, time10, lives10, baseX, baseY + 95);
-        drawRow(g2, "20", record20, time20, lives20, baseX, baseY + 145);
-        drawRow(g2, "30", record30, time30, lives30, baseX, baseY + 195);
-        drawRow(g2, "40", record40, time40, lives40, baseX, baseY + 245);
-    }
+    g2.drawRect(baseX - 20, baseY + 20, width, height);
 
-    private void drawRow(Graphics2D g2, String wave, int record, int time, double lives, int x, int y) {
-        g2.drawString(wave, x + 10, y);
-        g2.drawString(String.valueOf(record), x + 95, y);
-        g2.drawString(formatTime(time), x + 200, y);
-        g2.drawString(String.valueOf(lives), x + 325, y);
-    }
+    g2.drawLine(baseX + 60, baseY + 20, baseX + 60, baseY + 260);
+    g2.drawLine(baseX + 170, baseY + 20, baseX + 170, baseY + 260);
+    g2.drawLine(baseX + 290, baseY + 20, baseX + 290, baseY + 260);
+
+    g2.drawLine(baseX - 20, baseY + 60, baseX + 400, baseY + 60);
+    g2.drawLine(baseX - 20, baseY + 110, baseX + 400, baseY + 110);
+    g2.drawLine(baseX - 20, baseY + 160, baseX + 400, baseY + 160);
+    g2.drawLine(baseX - 20, baseY + 210, baseX + 400, baseY + 210);
+
+    g2.drawString("Wave", baseX + 10, baseY + 50);
+    g2.drawString("Record", baseX + 80, baseY + 50);
+    g2.drawString("Tiempo", baseX + 190, baseY + 50);
+    g2.drawString("Vidas", baseX + 320, baseY + 50);
+
+    drawRow(g2, "10", record10, time10, lives10, baseX, baseY + 95);
+    drawRow(g2, "20", record20, time20, lives20, baseX, baseY + 145);
+    drawRow(g2, "30", record30, time30, lives30, baseX, baseY + 195);
+    drawRow(g2, "40", record40, time40, lives40, baseX, baseY + 245);
+}
+private void drawRow(Graphics2D g2, String wave,
+                     int record, int time, double lives,
+                     int baseX, int y) {
+
+    g2.setFont(MedievalFont.getFont(20f));
+    g2.setColor(Color.WHITE);
+    g2.drawString(wave, baseX + 10, y);
+    g2.drawString(String.valueOf(record), baseX + 90, y);
+    g2.drawString(formatTime(time), baseX + 190, y);
+    g2.drawString(String.valueOf(lives), baseX + 320, y);
+}
 private void sortInfinite() {
 
     for (int i = 0; i < 4; i++) {
@@ -233,7 +252,49 @@ private void sortInfinite() {
     g2.drawLine(topX - 20, topY + 140, topX - 20 + width, topY + 140);
     g2.drawLine(topX - 20, topY + 180, topX - 20 + width, topY + 180);
 }
+    private void loadInfinite() {
+    try {
+        java.io.File file = new java.io.File("infinite.txt");
+        System.out.println(file.getAbsolutePath());
 
+        for (int i = 0; i < 4; i++) {
+            infScore[i] = 0;
+            infWave[i] = 0;
+            infTime[i] = 0;
+            infLives[i] = 0;
+        }
+
+        if (!file.exists()) return;
+
+java.util.Scanner sc = new java.util.Scanner(file);
+sc.useLocale(java.util.Locale.US);
+        int i = 0;
+
+        while (sc.hasNext() && i < 4) {
+
+            if (sc.hasNextInt()) infScore[i] = sc.nextInt();
+            else break;
+
+            if (sc.hasNextInt()) infWave[i] = sc.nextInt();
+            else break;
+
+            if (sc.hasNextInt()) infTime[i] = sc.nextInt();
+            else break;
+
+            if (sc.hasNextDouble()) infLives[i] = sc.nextDouble();
+            else break;
+
+            i++;
+        }
+
+        sc.close();
+
+        sortInfinite();
+
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+}
     private void loadRecords() {
         try {
             java.io.File file = new java.io.File("record.txt");
@@ -247,10 +308,7 @@ private void sortInfinite() {
             record30 = sc.nextInt(); time30 = sc.nextInt(); lives30 = sc.nextDouble();
             record40 = sc.nextInt(); time40 = sc.nextInt(); lives40 = sc.nextDouble();
 
-            if (sc.hasNextInt()) {
-    sc.nextInt();
-}
-
+            
 for (int i = 0; i < 4; i++) {
 
     if (sc.hasNextInt()) {

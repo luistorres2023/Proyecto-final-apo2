@@ -19,7 +19,6 @@ import javax.imageio.ImageIO;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
-
 import usc.edu.Main;
 import usc.edu.WaveMenu;
 import usc.edu.StartMenu;
@@ -118,13 +117,14 @@ public class GamePanel extends JPanel implements Runnable, MouseListener, MouseM
     if(maxWave == 30) return record30;
     if(maxWave == 40) return record40;
 
-    return recordInfinite;
+    return infScore[0];
 }
     public GamePanel(int maxWave) {
         instance = this;
         this.maxWave = maxWave;
         startTime = System.currentTimeMillis();
         loadRecord();
+        loadInfiniteRecord();
         music.playMusic("/assets/music/background.wav");
 
         setPreferredSize( new Dimension(WIDTH, HEIGHT));
@@ -161,28 +161,46 @@ public class GamePanel extends JPanel implements Runnable, MouseListener, MouseM
         }
     }
 }
-    public void updateInfiniteRanking() {
+   public void updateInfiniteRanking() {
 
-    for(int i = 0; i < 4; i++) {
+    for(int i = 0; i < 4; i++){
 
-        if(score > infScore[i]) {
+        if(
+    infScore[i] == score &&
+    infWave[i] == wave
+){
+    return;
+}
+    }
 
-            for(int j = 3; j > i; j--) {
+    int pos = -1;
 
-                infScore[j] = infScore[j - 1];
-                infWave[j] = infWave[j - 1];
-                infTime[j] = infTime[j - 1];
-                infLives[j] = infLives[j - 1];
-            }
+    for(int i = 0; i < 4; i++){
 
-            infScore[i] = score;
-            infWave[i] = wave;
-            infTime[i] = elapsedSeconds;
-            infLives[i] = lives;
-
+        if(score > infScore[i]){
+            pos = i;
             break;
         }
     }
+
+    if(pos == -1){
+        return;
+    }
+
+    for(int j = 3; j > pos; j--){
+
+        infScore[j] = infScore[j-1];
+        infWave[j] = infWave[j-1];
+        infTime[j] = infTime[j-1];
+        infLives[j] = infLives[j-1];
+    }
+
+    infScore[pos] = score;
+    infWave[pos] = wave;
+    infTime[pos] = elapsedSeconds;
+    infLives[pos] = lives;
+
+    saveInfiniteRecord();
 }
     public void loadRecord() {
 
@@ -210,16 +228,6 @@ public class GamePanel extends JPanel implements Runnable, MouseListener, MouseM
         if (sc.hasNextInt()) time40 = sc.nextInt();
         if (sc.hasNextDouble()) lives40 = sc.nextDouble();
 
-        if (sc.hasNextInt()) recordInfinite = sc.nextInt();
-
-        for (int i = 0; i < 4; i++) {
-            if (sc.hasNextInt()) {
-                infScore[i] = sc.nextInt();
-                infWave[i] = sc.nextInt();
-                infTime[i] = sc.nextInt();
-                infLives[i] = sc.nextDouble();
-            }
-        }
 
         sc.close();
 
@@ -249,15 +257,6 @@ public void saveRecord() {
         pw.println(record40);
         pw.println(time40);
         pw.println(lives40);
-
-        pw.println(recordInfinite);
-        for(int i = 0; i < 4; i++) {
-
-    pw.println(infScore[i]);
-    pw.println(infWave[i]);
-    pw.println(infTime[i]);
-    pw.println(infLives[i]);
-}
 
         pw.close();
 
@@ -383,6 +382,8 @@ public double getLives(int waves) {
     }
     public void updateRecord() {
 
+    if(recordChanged) return;
+
     if(maxWave == 10 && score > record10) {
         record10 = score;
         time10 = elapsedSeconds;
@@ -411,15 +412,18 @@ public double getLives(int waves) {
         recordChanged = true;
     }
 
-    else if(maxWave == -1 && score > recordInfinite) {
-        recordInfinite = score;
+
+  
         recordChanged = true;
     }
-}
+
 public void updateAndSave() {
+
     if (maxWave == -1) {
         updateInfiniteRanking();
+        return;
     }
+
     updateRecord();
     saveRecord();
 }
@@ -507,12 +511,7 @@ public void updateAndSave() {
 
     score += (int)(enemy.points * currentMultiplier * waveBonus);
 
-int oldRecord = getCurrentRecord();
 
-updateAndSave();
-if(getCurrentRecord() > oldRecord) {
-    saveRecord();
-}
    
 }
                 }
@@ -557,26 +556,30 @@ javax.swing.SwingUtilities.getWindowAncestor(this).dispose();
         if (lives <= 0) {
 
     lives = 0;
-    if(maxWave == -1){
-    updateInfiniteRanking();
-}
 
-    updateAndSave();
+    if (maxWave == -1) {
+        updateInfiniteRanking();
+        saveInfiniteRecord();
+    } else {
+        updateRecord();
+        saveRecord();
+    }
 
     running = false;
 
-JOptionPane.showMessageDialog(this, "GAME OVER");
+    JOptionPane.showMessageDialog(this, "GAME OVER");
 
-music.stopMusic();
-new WaveMenu();
+    music.stopMusic();
+    new WaveMenu();
 
-javax.swing.SwingUtilities.getWindowAncestor(this).dispose();
-
+    javax.swing.SwingUtilities.getWindowAncestor(this).dispose();
     return;
-        }
+}
     }
 
-
+public void saveInfiniteOnlyIfNeeded() {
+    saveInfiniteRecord();
+}
     public void spawnEnemies() {
     long currentTime = System.currentTimeMillis();
 
@@ -807,25 +810,42 @@ g2.drawString("SCORE: " + score, WIDTH - 180, 100);
         return true;
     }
 
-    @Override
+
+@Override
 public void mousePressed(MouseEvent e) {
 
     if (paused) {
 
         Point p = e.getPoint();
+
         if (resumeButton.contains(p)) {
             paused = false;
-        }if (restartButton.contains(p)) {
-            resetGame();
-        }if (exitButton.contains(p)) {
+        }
 
-    running = false;
+        if (restartButton.contains(p)) {
 
-    music.stopMusic();   
+    updateAndSave();
 
-    new WaveMenu();
-    javax.swing.SwingUtilities.getWindowAncestor(this).dispose();
+    resetGame();
 }
+
+        if (exitButton.contains(p)) {
+
+            if (maxWave == -1) {
+                updateInfiniteRanking();
+                saveInfiniteRecord();
+            } else {
+                updateRecord();
+                saveRecord();
+            }
+
+            running = false;
+
+            music.stopMusic();
+
+            new WaveMenu();
+            javax.swing.SwingUtilities.getWindowAncestor(this).dispose();
+        }
 
         return;
     }
@@ -833,31 +853,26 @@ public void mousePressed(MouseEvent e) {
     int mouseX = e.getX();
     int mouseY = e.getY();
 
-
     if(mouseX >= 200 && mouseX <= 264 &&
        mouseY >= HEIGHT - 90 && mouseY <= HEIGHT - 26) {
-
         selectedTower = 1;
         return;
     }
 
     if(mouseX >= 320 && mouseX <= 384 &&
        mouseY >= HEIGHT - 90 && mouseY <= HEIGHT - 26) {
-
         selectedTower = 2;
         return;
     }
 
     if(mouseX >= 440 && mouseX <= 504 &&
        mouseY >= HEIGHT - 90 && mouseY <= HEIGHT - 26) {
-
         selectedTower = 3;
         return;
     }
 
     if(mouseX >= 560 && mouseX <= 624 &&
        mouseY >= HEIGHT - 90 && mouseY <= HEIGHT - 26) {
-
         selectedTower = 4;
         return;
     }
@@ -869,25 +884,21 @@ public void mousePressed(MouseEvent e) {
         return;
 
     if (selectedTower == 1 && money >= 50) {
-
         towers.add(new BasicTower(gridX, gridY, tower1Img));
         money -= 50;
     }
 
     if (selectedTower == 2 && money >= 60) {
-
         towers.add(new SlowDownTower(gridX, gridY, tower4Img));
         money -= 60;
     }
 
     if (selectedTower == 3 && money >= 75) {
-
         towers.add(new MagicTower(gridX, gridY, tower3Img));
         money -= 75;
     }
 
     if (selectedTower == 4 && money >= 100) {
-
         towers.add(new SniperTower(gridX, gridY, tower2Img));
         money -= 100;
     }
@@ -926,6 +937,58 @@ public void mousePressed(MouseEvent e) {
         mouseGridX = e.getX() / TILE_SIZE;
         mouseGridY = e.getY() / TILE_SIZE;
     }
+    public void loadInfiniteRecord() {
+
+    try {
+        java.io.File file = new java.io.File("infinite.txt");
+
+        if (!file.exists()) {
+            for (int i = 0; i < 4; i++) {
+                infScore[i] = 0;
+                infWave[i] = 0;
+                infTime[i] = 0;
+                infLives[i] = 0;
+            }
+            return;
+        }
+
+          java.util.Scanner sc = new java.util.Scanner(file);
+sc.useLocale(java.util.Locale.US);
+        for (int i = 0; i < 4; i++) {
+            if (sc.hasNextInt()) infScore[i] = sc.nextInt();
+            if (sc.hasNextInt()) infWave[i] = sc.nextInt();
+            if (sc.hasNextInt()) infTime[i] = sc.nextInt();
+            if (sc.hasNextDouble()) infLives[i] = sc.nextDouble();
+        }
+        sc.useLocale(java.util.Locale.US);
+
+        sc.close();
+
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+}
+public void saveInfiniteRecord() {
+
+    try {
+
+        java.io.PrintWriter pw =
+                new java.io.PrintWriter("infinite.txt");
+
+        for (int i = 0; i < 4; i++) {
+
+            pw.println(infScore[i]);
+            pw.println(infWave[i]);
+            pw.println(infTime[i]);
+            pw.println(infLives[i]);
+        }
+
+        pw.close();
+
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+}
 
     @Override public void mouseDragged(MouseEvent e){}
     @Override public void mouseClicked(MouseEvent e){}
