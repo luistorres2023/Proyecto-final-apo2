@@ -179,35 +179,60 @@ private void sortInfinite() {
         }
     }
 }
-    private void drawInfinite(Graphics2D g2) {
-        sortInfinite();
-        int topX = 450, topY = 390;
+   private void drawInfinite(Graphics2D g2) {
 
-        g2.setFont(MedievalFont.getFont(25f));
-        g2.setColor(Color.BLACK);
-        g2.drawString("TOP 4 INFINITE", topX, topY);
-        g2.setFont(MedievalFont.getFont(20f));
-        g2.setColor(Color.WHITE);
-        g2.drawRect(topX - 20, topY + 20, 380, 190);
-        g2.drawLine(topX + 40, topY + 20, topX + 40, topY + 210);
-        g2.drawLine(topX + 120, topY + 20, topX + 120, topY + 210);
-        g2.drawLine(topX + 40, topY + 20, topX + 40, topY + 210);
-        g2.drawLine(topX + 120, topY + 20, topX + 120, topY + 210);
-        g2.drawLine(topX + 220, topY + 20, topX + 220, topY + 210);
-        g2.drawLine(topX + 320, topY + 20, topX + 320, topY + 210);
-        g2.drawLine(topX - 20, topY + 60, topX + 360, topY + 60);
-        g2.drawLine(topX - 20, topY + 100, topX + 360, topY + 100);
-        g2.drawLine(topX - 20, topY + 140, topX + 360, topY + 140);
-        g2.drawLine(topX - 20, topY + 180, topX + 360, topY + 180);
+    sortInfinite();
 
-        for (int i = 0; i < 4; i++) {
-    g2.drawString((i + 1) + "°", topX, topY + 90 + (i * 40));
-    g2.drawString(String.valueOf(infScore[i]), topX + 50, topY + 90 + (i * 40));
-    g2.drawString(String.valueOf(infWave[i]), topX + 140, topY + 90 + (i * 40));
-    g2.drawString(formatTime(infTime[i]), topX + 230, topY + 90 + (i * 40));
-    g2.drawString(String.valueOf(infLives[i]), topX + 320, topY + 90 + (i * 40));
-}
+    int topX = 450, topY = 390;
+    int width = 460;   
+    int height = 190;
+
+    g2.setColor(new Color(0, 0, 0, 120));
+    g2.fillRect(topX - 20, topY + 20, width, height);
+
+    g2.setFont(MedievalFont.getFont(25f));
+    g2.setColor(Color.BLACK);
+    g2.drawString("TOP 4 INFINITE", topX, topY);
+
+    int colPos   = topX;
+    int colScore = topX + 55;
+    int colWave  = topX + 155;
+    int colTime  = topX + 255;
+    int colLives = topX + 355;
+
+    g2.setFont(MedievalFont.getFont(18f));
+    g2.setColor(Color.WHITE);
+
+    int headerY = topY + 45;
+
+    g2.drawString("POS", colPos, headerY);
+    g2.drawString("SCORE", colScore, headerY);
+    g2.drawString("WAVE", colWave, headerY);
+    g2.drawString("TIME", colTime, headerY);
+    g2.drawString("LIVES", colLives, headerY);
+
+    for (int i = 0; i < 4; i++) {
+
+        int y = topY + 90 + (i * 40);
+
+        g2.drawString((i + 1) + "°", colPos, y);
+        g2.drawString(String.valueOf(infScore[i]), colScore, y);
+        g2.drawString(String.valueOf(infWave[i]), colWave, y);
+        g2.drawString(formatTime(infTime[i]), colTime, y);
+        g2.drawString(String.valueOf(infLives[i]), colLives, y);
     }
+
+    g2.setColor(Color.WHITE);
+    g2.drawRect(topX - 20, topY + 20, width, height);
+    g2.drawLine(colScore - 10, topY + 20, colScore - 10, topY + 210);
+    g2.drawLine(colWave - 10, topY + 20, colWave - 10, topY + 210);
+    g2.drawLine(colTime - 10, topY + 20, colTime - 10, topY + 210);
+    g2.drawLine(colLives - 10, topY + 20, colLives - 10, topY + 210);
+    g2.drawLine(topX - 20, topY + 60, topX - 20 + width, topY + 60);
+    g2.drawLine(topX - 20, topY + 100, topX - 20 + width, topY + 100);
+    g2.drawLine(topX - 20, topY + 140, topX - 20 + width, topY + 140);
+    g2.drawLine(topX - 20, topY + 180, topX - 20 + width, topY + 180);
+}
 
     private void loadRecords() {
         try {
