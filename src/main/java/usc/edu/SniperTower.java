@@ -8,5 +8,6 @@ public class SniperTower extends Tower {
         bulletSize=25;
         this.hp = 250;
         this.maxHp = 250;
+        scoreMultiplier = 1.8;
     }
 }

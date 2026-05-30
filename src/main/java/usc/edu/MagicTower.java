@@ -7,5 +7,6 @@ import java.awt.image.BufferedImage;
         bulletSize=35;
         this.hp = 175;
         this.maxHp = 175;
+        scoreMultiplier = 1.5;
     }
 }

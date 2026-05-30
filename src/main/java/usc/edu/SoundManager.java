@@ -18,8 +18,13 @@ public class SoundManager {
             AudioInputStream audio = AudioSystem.getAudioInputStream(url);
             clip = AudioSystem.getClip();
             clip.open(audio);
-            FloatControl volume = (FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN);
+
+            FloatControl volume =
+                (FloatControl) clip.getControl(
+                    FloatControl.Type.MASTER_GAIN);
+
             volume.setValue(-5.0f);
+
             clip.loop(Clip.LOOP_CONTINUOUSLY);
             clip.start();
 
@@ -27,6 +32,15 @@ public class SoundManager {
 
             System.out.println("ERROR DE AUDIO:");
             e.printStackTrace();
+        }
+    }
+
+    public void stopMusic() {
+
+        if (clip != null) {
+
+            clip.stop();
+            clip.close();
         }
     }
 }

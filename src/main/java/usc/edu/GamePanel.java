@@ -13,12 +13,16 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
+import java.util.Scanner;
 import java.awt.Toolkit;
 import javax.imageio.ImageIO;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 
+import usc.edu.Main;
+import usc.edu.WaveMenu;
+import usc.edu.StartMenu;
 public class GamePanel extends JPanel implements Runnable, MouseListener, MouseMotionListener, KeyListener {
     
     final int WIDTH = 1280;
@@ -68,6 +72,23 @@ public class GamePanel extends JPanel implements Runnable, MouseListener, MouseM
     double lives = 10;
     int maxWave = -1;
     int wave = 1;
+    int score = 0;
+    int record10 = 0;
+    int record20 = 0;
+    int record30 = 0;
+    int record40 = 0;
+    int recordInfinite = 0;
+    int time10 = 0;
+    int time20 = 0;
+    int time30 = 0;
+    int time40 = 0;
+    double lives10 = 0;
+    double lives20 = 0;
+    double lives30 = 0;
+    double lives40 = 0;
+    long startTime;
+    int elapsedSeconds = 0;
+    double currentMultiplier = 1.0;
 
     long lastSpawn = 0;
 
@@ -82,11 +103,21 @@ public class GamePanel extends JPanel implements Runnable, MouseListener, MouseM
     Rectangle exitButton = new Rectangle(WIDTH / 2 - 100, 380, 200, 50);
     
 
-    public static ArrayList<Point> pathPoints =
-            new ArrayList<>();
+    public static ArrayList<Point> pathPoints =new ArrayList<>();
+    public int getCurrentRecord() {
+
+    if(maxWave == 10) return record10;
+    if(maxWave == 20) return record20;
+    if(maxWave == 30) return record30;
+    if(maxWave == 40) return record40;
+
+    return recordInfinite;
+}
     public GamePanel(int maxWave) {
         instance = this;
         this.maxWave = maxWave;
+        startTime = System.currentTimeMillis();
+        loadRecord();
         music.playMusic("/assets/music/background.wav");
 
         setPreferredSize( new Dimension(WIDTH, HEIGHT));
@@ -123,6 +154,75 @@ public class GamePanel extends JPanel implements Runnable, MouseListener, MouseM
         }
     }
 }
+    public void loadRecord() {
+
+    try {
+
+        java.io.File file = new java.io.File("record.txt");
+
+        if(file.exists()) {
+
+            java.util.Scanner sc = new Scanner(file);
+sc.useLocale(java.util.Locale.US);
+
+            record10 = sc.nextInt();
+            time10 = sc.nextInt();
+            lives10 = sc.nextDouble();
+
+            record20 = sc.nextInt();
+            time20 = sc.nextInt();
+            lives20 = sc.nextDouble();
+
+            record30 = sc.nextInt();
+            time30 = sc.nextInt();
+            lives30 = sc.nextDouble();
+
+            record40 = sc.nextInt();
+            time40 = sc.nextInt();
+            lives40 = sc.nextDouble();
+
+            recordInfinite = sc.nextInt();
+
+            sc.close();
+        }
+
+    } catch(Exception e) {
+
+        e.printStackTrace();
+    }
+}
+public void saveRecord() {
+
+    try {
+
+        java.io.PrintWriter pw =
+                new java.io.PrintWriter("record.txt");
+
+        pw.println(record10);
+        pw.println(time10);
+        pw.println(lives10);
+
+        pw.println(record20);
+        pw.println(time20);
+        pw.println(lives20);
+
+        pw.println(record30);
+        pw.println(time30);
+        pw.println(lives30);
+
+        pw.println(record40);
+        pw.println(time40);
+        pw.println(lives40);
+
+        pw.println(recordInfinite);
+
+        pw.close();
+
+    } catch(Exception e) {
+
+        e.printStackTrace();
+    }
+}
 
     public void createPath() {
 
@@ -133,6 +233,40 @@ public class GamePanel extends JPanel implements Runnable, MouseListener, MouseM
         pathPoints.add(new Point(10, 7));
         pathPoints.add(new Point(14, 7));
     }
+public int getRecord(int waves) {
+
+    if(waves == 10) return record10;
+    if(waves == 20) return record20;
+    if(waves == 30) return record30;
+    if(waves == 40) return record40;
+
+    return 0;
+}
+
+public String getTime(int waves) {
+
+    int tiempo = 0;
+
+    if(waves == 10) tiempo = time10;
+    if(waves == 20) tiempo = time20;
+    if(waves == 30) tiempo = time30;
+    if(waves == 40) tiempo = time40;
+
+    int min = tiempo / 60;
+    int seg = tiempo % 60;
+
+    return String.format("%d:%02d", min, seg);
+}
+
+public double getLives(int waves) {
+
+    if(waves == 10) return lives10;
+    if(waves == 20) return lives20;
+    if(waves == 30) return lives30;
+    if(waves == 40) return lives40;
+
+    return 0;
+}
 
     public void createMap() {
 
@@ -204,16 +338,58 @@ public class GamePanel extends JPanel implements Runnable, MouseListener, MouseM
 }
         }
     }
+    public void updateRecord() {
+
+    if(maxWave == 10 && score > record10) {
+
+        record10 = score;
+        time10 = elapsedSeconds;
+        lives10 = lives;
+        saveRecord();
+    }
+
+    else if(maxWave == 20 && score > record20) {
+
+        record20 = score;
+        time20 = elapsedSeconds;
+        lives20 = lives;
+        saveRecord();
+    }
+
+    else if(maxWave == 30 && score > record30) {
+
+        record30 = score;
+        time30 = elapsedSeconds;
+        lives30 = lives;
+        saveRecord();
+    }
+
+    else if(maxWave == 40 && score > record40) {
+
+        record40 = score;
+        time40 = elapsedSeconds;
+        lives40 = lives;
+        saveRecord();
+    }
+
+    else if(maxWave == -1 && score > recordInfinite) {
+
+        recordInfinite = score;
+        saveRecord();
+    }
+}
 
     public void updateGame() {
 
         spawnEnemies();
+        elapsedSeconds =(int)((System.currentTimeMillis() - startTime) / 1000);
 
         for (Enemy enemy : enemies) {
 
             enemy.update();
 
-            if (enemy.finished) {
+            if (enemy.finished && enemy.alive) {
+               
 
     enemy.alive = false;
 
@@ -263,21 +439,34 @@ public class GamePanel extends JPanel implements Runnable, MouseListener, MouseM
 
                     bullet.active = false;
 
-                    if (enemy.hp <= 0) {
+                    if(enemy.hp <= 0) {
 
     enemy.alive = false;
 
     if (enemy instanceof TankEnemy) {
-            money += 15;
-    }else if (enemy instanceof Witch) {
+        money += 15;
+    } else if (enemy instanceof Witch) {
         money += 30;
-
     } else if (enemy instanceof NIGROMANTE) {
         money += 250;
     } else {
-
         money += 5;
     }
+
+    currentMultiplier = bullet.owner.scoreMultiplier;
+
+    int waveBonus = wave;
+
+    score += (int)(enemy.points * currentMultiplier * waveBonus);
+
+int oldRecord = getCurrentRecord();
+
+updateRecord();
+
+if(getCurrentRecord() > oldRecord) {
+    saveRecord();
+}
+   
 }
                 }
             }
@@ -293,15 +482,26 @@ public class GamePanel extends JPanel implements Runnable, MouseListener, MouseM
         bullets.addAll(bulletsToAdd);
         bulletsToAdd.clear();
 
-        if(enemiesSpawned >= enemiesPerWave && enemies.isEmpty()) {
+        if(enemiesSpawned >= enemiesPerWave && enemies.isEmpty() && enemiesToAdd.isEmpty()) {
 
         wave++;
+        score += wave * 20;
+        updateRecord();
+        saveRecord();
 
         if(maxWave != -1 && wave > maxWave) {
+            if(lives == 10) {
 
-        JOptionPane.showMessageDialog(this,"VICTORY!");
-        new MainMenu();
-        javax.swing.SwingUtilities.getWindowAncestor(this).dispose();
+    score += 500;
+    updateRecord();
+    saveRecord();
+}
+        updateRecord();
+        saveRecord();
+        running = false;
+JOptionPane.showMessageDialog(this,"VICTORY!");
+new MainMenu();
+javax.swing.SwingUtilities.getWindowAncestor(this).dispose();
         return;
     }
 
@@ -311,11 +511,23 @@ public class GamePanel extends JPanel implements Runnable, MouseListener, MouseM
 
         if (lives <= 0) {
 
-            JOptionPane.showMessageDialog(this, "GAME OVER");
+    lives = 0;
 
-            System.exit(0);
+    updateRecord();
+    saveRecord();
+
+    running = false;
+
+JOptionPane.showMessageDialog(this, "GAME OVER");
+
+new WaveMenu();
+
+javax.swing.SwingUtilities.getWindowAncestor(this).dispose();
+
+    return;
         }
     }
+
 
     public void spawnEnemies() {
     long currentTime = System.currentTimeMillis();
@@ -348,7 +560,7 @@ public class GamePanel extends JPanel implements Runnable, MouseListener, MouseM
             }
         }
 
-        if(wave % 10 == 0 && enemiesSpawned == 1)
+        if(wave % 5 == 0 && enemiesSpawned == 1)
             spawnNigromante = true;
 
         if(spawnWitch) {
@@ -361,12 +573,11 @@ public class GamePanel extends JPanel implements Runnable, MouseListener, MouseM
             enemiesToAdd.add(new TankEnemy(0,4 * TILE_SIZE,tankEnemyImg));
         }
         else {
-            enemiesToAdd.add(new FastEnemy(0,4 * TILE_SIZE,fastEnemyImg));
-
-            if(Math.random() < 0.5) {
-                enemiesToAdd.add(new NormalEnemy(0,4 * TILE_SIZE,normalenemyImg));
-            }
-        }
+    if(Math.random() < 0.5)
+        enemiesToAdd.add(new NormalEnemy(0,4 * TILE_SIZE,normalenemyImg));
+    else
+        enemiesToAdd.add(new FastEnemy(0,4 * TILE_SIZE,fastEnemyImg));
+}
 
         enemiesSpawned++;
         lastSpawn = currentTime;
@@ -442,8 +653,17 @@ protected void paintComponent(Graphics g) {
     g2.drawString("" + lives, WIDTH - 135, 50);
     g2.drawImage(waveIcon, WIDTH - 90, 25, 32, 32, null);
     g2.drawString("" + wave, WIDTH - 45, 50);
+    g2.setFont(MedievalFont.getFont(22f));
+
+int min = elapsedSeconds / 60;
+int sec = elapsedSeconds % 60;
+String tiempo = String.format("%02d:%02d", min, sec);
+
+g2.drawString(tiempo, WIDTH - 180, 120);
+g2.drawString("RECORD: " + getCurrentRecord(), WIDTH - 180, 80);
+g2.drawString("SCORE: " + score, WIDTH - 180, 100);
     g2.setColor(new Color(40,40,40));
-    g2.fillRect(0, HEIGHT - 100, WIDTH, 100);
+    g2.fillRect(0, HEIGHT - 100, WIDTH, 140);
     g2.setColor(Color.WHITE);
     g2.drawString("SELEC. TORRE",20,HEIGHT - 60);
     g2.drawImage(basicIcon,200,HEIGHT - 90,64,64,null);
@@ -518,6 +738,9 @@ protected void paintComponent(Graphics g) {
     wave = 1;
     enemiesSpawned = 0;
     enemiesPerWave = 7;
+    score = 0;
+    startTime = System.currentTimeMillis();
+    elapsedSeconds = 0;
     paused = false;
 }
 
@@ -542,19 +765,19 @@ public void mousePressed(MouseEvent e) {
     if (paused) {
 
         Point p = e.getPoint();
-
         if (resumeButton.contains(p)) {
             paused = false;
-        }
-
-        if (restartButton.contains(p)) {
+        }if (restartButton.contains(p)) {
             resetGame();
-        }
+        }if (exitButton.contains(p)) {
 
-        if (exitButton.contains(p)) {
-            new MainMenu();
-                javax.swing.SwingUtilities.getWindowAncestor(this).dispose();
-        }
+    running = false;
+
+    music.stopMusic();   
+
+    new WaveMenu();
+    javax.swing.SwingUtilities.getWindowAncestor(this).dispose();
+}
 
         return;
     }

@@ -16,6 +16,7 @@ public class Enemy {
     BufferedImage sprite;
     int pathIndex = 0;
     int towerDamage;
+    int points = 10;
     int lastGridX = -1;
     int lastGridY = -1;
 
@@ -32,38 +33,36 @@ public class Enemy {
 
     public void update() {
 
-        if (!alive)
-            return;
+    if (!alive)
+        return;
 
-        if (pathIndex >= GamePanel.pathPoints.size()) {
+    if (pathIndex >= GamePanel.pathPoints.size()) {
 
-            finished = true;
-
-            return;
-        }
-
-        Point target = GamePanel.pathPoints.get(pathIndex);
-        double targetX = target.x * 64;
-        double targetY = target.y * 64;
-        double dx = targetX - x;
-        double dy = targetY - y;
-        double distance =Math.sqrt(dx * dx + dy * dy);
-
-        if (distance < 4) {
-
-            pathIndex++;
-
-            return;
-        }
-
-        dx /= distance;
-        dy /= distance;
-
-        x += dx * speed;
-        y += dy * speed;
-
-        damageTowers();
+        finished = true; 
+        return;
     }
+
+    Point target = GamePanel.pathPoints.get(pathIndex);
+    double targetX = target.x * 64;
+    double targetY = target.y * 64;
+    double dx = targetX - x;
+    double dy = targetY - y;
+    double distance = Math.sqrt(dx * dx + dy * dy);
+
+    if (distance < 4) {
+
+        pathIndex++;
+        return;
+    }
+
+    dx /= distance;
+    dy /= distance;
+
+    x += dx * speed;
+    y += dy * speed;
+
+    damageTowers();
+}
 
     public void damageTowers() {
 

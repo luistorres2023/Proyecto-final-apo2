@@ -10,6 +10,7 @@ public class SlowDownTower extends Tower{
     bulletSize=30;
     this.hp = 150;
     this.maxHp = 150;
+    scoreMultiplier = 1.2;
 }
 
 @Override
@@ -55,7 +56,7 @@ public void update(ArrayList<Enemy> enemies,ArrayList<Bullet> bullets){
 
 }).start();
 
-    GamePanel.bulletsToAdd.add(new Bullet(x+32, y+32, target, damage, bulletSprite, bulletSize));
+    GamePanel.bulletsToAdd.add(new Bullet(x+32, y+32, target, damage, bulletSprite, bulletSize,this));
     lastShot=currentTime;
         }
     }

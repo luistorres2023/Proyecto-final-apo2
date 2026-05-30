@@ -8,5 +8,6 @@ public class BasicTower extends Tower {
         bulletSize=30;
         this.hp = 100;
         this.maxHp = 100;
+        scoreMultiplier = 1.0;
     }
 }

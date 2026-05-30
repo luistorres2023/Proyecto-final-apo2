@@ -19,6 +19,7 @@ public class Tower {
     int hp;
     int maxHp;
     boolean alive = true;
+    double scoreMultiplier = 1.0;
 
     public Tower(int gridX,int gridY,int range,int damage,long fireRate,BufferedImage sprite) {
 
@@ -64,7 +65,7 @@ public class Tower {
 
         if (target != null) {
 
-            GamePanel.bulletsToAdd.add(new Bullet(x,y,target,damage,bulletSprite,bulletSize));
+            GamePanel.bulletsToAdd.add(new Bullet(x,y,target,damage,bulletSprite,bulletSize,this));
         
             lastShot = currentTime;
         }
@@ -82,4 +83,12 @@ public class Tower {
     int hpWidth = (int)((hp/(double)maxHp)*40);
     g2.fillRect(x + 12,y - 10,hpWidth,5);
 }
+public double getScoreMultiplier() {
+    return scoreMultiplier;
+}
+
+public void setScoreMultiplier(double scoreMultiplier) {
+    this.scoreMultiplier = scoreMultiplier;
+}
+
 }

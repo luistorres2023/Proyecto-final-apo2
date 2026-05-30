@@ -14,13 +14,15 @@ public class Bullet{
     double speed=7;
     int damage;
     int size;
-    public Bullet(double x,double y,Enemy target,int damage,String imagePath, int size){
+    Tower owner;
+    public Bullet(double x,double y,Enemy target,int damage,String imagePath, int size,Tower owner ){
 
         this.x=x;
         this.y=y;
         this.target=target;
         this.damage=damage;
         this.size=size;
+        this.owner=owner;
 
         bulletImage=new ImageIcon(getClass().getResource(imagePath)).getImage();
         }

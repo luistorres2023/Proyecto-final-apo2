@@ -8,6 +8,7 @@ public class Witch extends Enemy {
     private long lastHealTime;
     public Witch(double x, double y, BufferedImage sprite) {
         super(x, y, 180, 1.2, 50, sprite);
+        points = 50;
         lastHealTime = System.currentTimeMillis();
     }
 
