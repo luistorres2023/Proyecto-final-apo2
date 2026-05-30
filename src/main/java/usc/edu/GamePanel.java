@@ -23,8 +23,9 @@ import usc.edu.Main;
 import usc.edu.WaveMenu;
 import usc.edu.StartMenu;
 public class GamePanel extends JPanel implements Runnable, MouseListener, MouseMotionListener, KeyListener {
-    
+
     final int WIDTH = 1280;
+    
     final int HEIGHT = 720;
     final int TILE_SIZE = 64;
     final int ROWS = HEIGHT / TILE_SIZE;
