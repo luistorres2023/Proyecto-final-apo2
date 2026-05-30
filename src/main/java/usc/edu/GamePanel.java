@@ -32,6 +32,10 @@ public class GamePanel extends JPanel implements Runnable, MouseListener, MouseM
     final int COLS = WIDTH / TILE_SIZE;
     public static GamePanel instance;
     int[][] map = new int[ROWS][COLS];
+    int[] infScore = new int[4];
+    int[] infWave = new int[4];
+    int[] infTime = new int[4];
+    double[] infLives = new double[4];
 
     BufferedImage grassImg;
     BufferedImage pathImg;
@@ -57,7 +61,7 @@ public class GamePanel extends JPanel implements Runnable, MouseListener, MouseM
     Thread gameThread;
 
     SoundManager music = new SoundManager();
-
+    boolean recordChanged = false;
     boolean running = true;
     boolean paused = false;
 
@@ -88,10 +92,13 @@ public class GamePanel extends JPanel implements Runnable, MouseListener, MouseM
     double lives40 = 0;
     long startTime;
     int elapsedSeconds = 0;
+    long pausedAccumulatedTime = 0;
+    long pauseStartTime = 0;
     double currentMultiplier = 1.0;
 
     long lastSpawn = 0;
-
+    long pausedTime = 0;
+    long pauseStart = 0;
     int enemiesSpawned = 0;
     int enemiesPerWave = 7;
     int selectedTower = 1;
@@ -154,40 +161,69 @@ public class GamePanel extends JPanel implements Runnable, MouseListener, MouseM
         }
     }
 }
+    public void updateInfiniteRanking() {
+
+    for(int i = 0; i < 4; i++) {
+
+        if(score > infScore[i]) {
+
+            for(int j = 3; j > i; j--) {
+
+                infScore[j] = infScore[j - 1];
+                infWave[j] = infWave[j - 1];
+                infTime[j] = infTime[j - 1];
+                infLives[j] = infLives[j - 1];
+            }
+
+            infScore[i] = score;
+            infWave[i] = wave;
+            infTime[i] = elapsedSeconds;
+            infLives[i] = lives;
+
+            break;
+        }
+    }
+}
     public void loadRecord() {
 
     try {
-
         java.io.File file = new java.io.File("record.txt");
 
-        if(file.exists()) {
+        if (!file.exists()) return;
 
-            java.util.Scanner sc = new Scanner(file);
-sc.useLocale(java.util.Locale.US);
+        java.util.Scanner sc = new java.util.Scanner(file);
+        sc.useLocale(java.util.Locale.US);
 
-            record10 = sc.nextInt();
-            time10 = sc.nextInt();
-            lives10 = sc.nextDouble();
+        if (sc.hasNextInt()) record10 = sc.nextInt();
+        if (sc.hasNextInt()) time10 = sc.nextInt();
+        if (sc.hasNextDouble()) lives10 = sc.nextDouble();
 
-            record20 = sc.nextInt();
-            time20 = sc.nextInt();
-            lives20 = sc.nextDouble();
+        if (sc.hasNextInt()) record20 = sc.nextInt();
+        if (sc.hasNextInt()) time20 = sc.nextInt();
+        if (sc.hasNextDouble()) lives20 = sc.nextDouble();
 
-            record30 = sc.nextInt();
-            time30 = sc.nextInt();
-            lives30 = sc.nextDouble();
+        if (sc.hasNextInt()) record30 = sc.nextInt();
+        if (sc.hasNextInt()) time30 = sc.nextInt();
+        if (sc.hasNextDouble()) lives30 = sc.nextDouble();
 
-            record40 = sc.nextInt();
-            time40 = sc.nextInt();
-            lives40 = sc.nextDouble();
+        if (sc.hasNextInt()) record40 = sc.nextInt();
+        if (sc.hasNextInt()) time40 = sc.nextInt();
+        if (sc.hasNextDouble()) lives40 = sc.nextDouble();
 
-            recordInfinite = sc.nextInt();
+        if (sc.hasNextInt()) recordInfinite = sc.nextInt();
 
-            sc.close();
+        for (int i = 0; i < 4; i++) {
+            if (sc.hasNextInt()) {
+                infScore[i] = sc.nextInt();
+                infWave[i] = sc.nextInt();
+                infTime[i] = sc.nextInt();
+                infLives[i] = sc.nextDouble();
+            }
         }
 
-    } catch(Exception e) {
+        sc.close();
 
+    } catch (Exception e) {
         e.printStackTrace();
     }
 }
@@ -215,6 +251,13 @@ public void saveRecord() {
         pw.println(lives40);
 
         pw.println(recordInfinite);
+        for(int i = 0; i < 4; i++) {
+
+    pw.println(infScore[i]);
+    pw.println(infWave[i]);
+    pw.println(infTime[i]);
+    pw.println(infLives[i]);
+}
 
         pw.close();
 
@@ -341,50 +384,55 @@ public double getLives(int waves) {
     public void updateRecord() {
 
     if(maxWave == 10 && score > record10) {
-
         record10 = score;
         time10 = elapsedSeconds;
         lives10 = lives;
-        saveRecord();
+        recordChanged = true;
     }
 
     else if(maxWave == 20 && score > record20) {
-
         record20 = score;
         time20 = elapsedSeconds;
         lives20 = lives;
-        saveRecord();
+        recordChanged = true;
     }
 
     else if(maxWave == 30 && score > record30) {
-
         record30 = score;
         time30 = elapsedSeconds;
         lives30 = lives;
-        saveRecord();
+        recordChanged = true;
     }
 
     else if(maxWave == 40 && score > record40) {
-
         record40 = score;
         time40 = elapsedSeconds;
         lives40 = lives;
-        saveRecord();
+        recordChanged = true;
     }
 
     else if(maxWave == -1 && score > recordInfinite) {
-
         recordInfinite = score;
-        saveRecord();
+        recordChanged = true;
     }
+}
+public void updateAndSave() {
+    if (maxWave == -1) {
+        updateInfiniteRanking();
+    }
+    updateRecord();
+    saveRecord();
 }
 
     public void updateGame() {
 
         spawnEnemies();
-        elapsedSeconds =(int)((System.currentTimeMillis() - startTime) / 1000);
+        if (!paused) {
+    long now = System.currentTimeMillis();
+    elapsedSeconds = (int)((now - startTime - pausedAccumulatedTime) / 1000);
+}
 
-        for (Enemy enemy : enemies) {
+       for (Enemy enemy : new ArrayList<>(enemies)) {
 
             enemy.update();
 
@@ -409,22 +457,22 @@ public double getLives(int waves) {
           }
         }
 
-        for (Tower tower : towers) {
+        for (Tower tower : new ArrayList<>(towers)) {
 
             tower.update(enemies, bullets);
         }
 
-        for (Bullet bullet : bullets) {
+        for (Bullet bullet : new ArrayList<>(bullets)) {
 
             bullet.update();
         }
 
-        for (Bullet bullet : bullets) {
+        for (Bullet bullet : new ArrayList<>(bullets)) {
 
             if (!bullet.active)
                 continue;
 
-            for (Enemy enemy : enemies) {
+            for (Enemy enemy : new ArrayList<>(enemies)) {
 
                 if (!enemy.alive)
                     continue;
@@ -461,8 +509,7 @@ public double getLives(int waves) {
 
 int oldRecord = getCurrentRecord();
 
-updateRecord();
-
+updateAndSave();
 if(getCurrentRecord() > oldRecord) {
     saveRecord();
 }
@@ -486,18 +533,16 @@ if(getCurrentRecord() > oldRecord) {
 
         wave++;
         score += wave * 20;
-        updateRecord();
-        saveRecord();
+        updateAndSave();
+
 
         if(maxWave != -1 && wave > maxWave) {
             if(lives == 10) {
 
     score += 500;
-    updateRecord();
-    saveRecord();
+    updateAndSave();
 }
-        updateRecord();
-        saveRecord();
+        updateAndSave();
         running = false;
 JOptionPane.showMessageDialog(this,"VICTORY!");
 new MainMenu();
@@ -512,14 +557,17 @@ javax.swing.SwingUtilities.getWindowAncestor(this).dispose();
         if (lives <= 0) {
 
     lives = 0;
+    if(maxWave == -1){
+    updateInfiniteRanking();
+}
 
-    updateRecord();
-    saveRecord();
+    updateAndSave();
 
     running = false;
 
 JOptionPane.showMessageDialog(this, "GAME OVER");
 
+music.stopMusic();
 new WaveMenu();
 
 javax.swing.SwingUtilities.getWindowAncestor(this).dispose();
@@ -750,7 +798,7 @@ g2.drawString("SCORE: " + score, WIDTH - 180, 100);
             return false;
         if(map[gridY][gridX] == 1 || map[gridY][gridX] == 2)
     return false;
-        for (Tower tower : towers) {
+       for (Tower tower : new ArrayList<>(towers)){
             if (tower.gridX == gridX &&
                     tower.gridY == gridY)
                 return false;
@@ -861,8 +909,15 @@ public void mousePressed(MouseEvent e) {
             selectedTower = 4;
         }
         if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
-            paused = !paused;
-        }
+
+    if (!paused) {
+        paused = true;
+        pauseStartTime = System.currentTimeMillis();
+    } else {
+        paused = false;
+        pausedAccumulatedTime += System.currentTimeMillis() - pauseStartTime;
+    }
+}
     }
 
     @Override
