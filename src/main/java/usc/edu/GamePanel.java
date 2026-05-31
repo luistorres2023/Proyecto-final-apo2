@@ -752,12 +752,12 @@ g2.fillRoundRect(
 
     g2.setFont(new Font("Arial", Font.BOLD, 22));
     g2.setColor(Color.WHITE);
-    g2.drawImage(moneyIcon, WIDTH - 280, 25, 32, 32, null);
-    g2.drawString("" + money, WIDTH - 235, 50);
-    g2.drawImage(heartIcon, WIDTH - 180, 25, 32, 32, null);
-    g2.drawString("" + lives, WIDTH - 135, 50);
-    g2.drawImage(waveIcon, WIDTH - 90, 25, 32, 32, null);
-    g2.drawString("" + wave, WIDTH - 45, 50);
+    g2.drawImage(moneyIcon, WIDTH - 335, 25, 32, 32, null);
+    g2.drawString("" + money, WIDTH - 290, 50);
+    g2.drawImage(heartIcon, WIDTH - 235, 25, 32, 32, null);
+    g2.drawString("" + lives, WIDTH - 190, 50);
+    g2.drawImage(waveIcon, WIDTH - 145, 25, 32, 32, null);
+    g2.drawString("" + wave, WIDTH - 100, 50);
     g2.setFont(MedievalFont.getFont(22f));
 
 int min = elapsedSeconds / 60;
