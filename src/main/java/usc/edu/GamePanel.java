@@ -12,14 +12,13 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.image.BufferedImage;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Scanner;
 import java.awt.Toolkit;
 import javax.imageio.ImageIO;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import java.awt.image.BufferedImage;
-import javax.imageio.ImageIO;
 
 import usc.edu.Main;
 import usc.edu.WaveMenu;
@@ -64,7 +63,6 @@ public class GamePanel extends JPanel implements Runnable, MouseListener, MouseM
     Thread gameThread;
 
     SoundManager music = new SoundManager();
-    boolean recordChanged = false;
     boolean running = true;
     boolean paused = false;
 
@@ -84,7 +82,6 @@ public class GamePanel extends JPanel implements Runnable, MouseListener, MouseM
     int record20 = 0;
     int record30 = 0;
     int record40 = 0;
-    int recordInfinite = 0;
     int time10 = 0;
     int time20 = 0;
     int time30 = 0;
@@ -201,7 +198,7 @@ try {
     infTime[pos] = elapsedSeconds;
     infLives[pos] = lives;
 
-    saveInfiniteRecord();
+
 }
     public void loadRecord() {
 
@@ -433,51 +430,31 @@ public double getLives(int waves) {
     }
     public void updateRecord() {
 
-    if(recordChanged) return;
-
     if(maxWave == 10 && score > record10) {
         record10 = score;
         time10 = elapsedSeconds;
         lives10 = lives;
-        recordChanged = true;
     }
 
     else if(maxWave == 20 && score > record20) {
         record20 = score;
         time20 = elapsedSeconds;
         lives20 = lives;
-        recordChanged = true;
     }
 
     else if(maxWave == 30 && score > record30) {
         record30 = score;
         time30 = elapsedSeconds;
         lives30 = lives;
-        recordChanged = true;
     }
 
     else if(maxWave == 40 && score > record40) {
         record40 = score;
         time40 = elapsedSeconds;
         lives40 = lives;
-        recordChanged = true;
     }
-
-
-  
-        recordChanged = true;
-    }
-
-public void updateAndSave() {
-
-    if (maxWave == -1) {
-        updateInfiniteRanking();
-        return;
-    }
-
-    updateRecord();
-    saveRecord();
 }
+
 
     public void updateGame() {
 
@@ -583,19 +560,23 @@ public void updateAndSave() {
 
         wave++;
         score += wave * 20;
-        updateAndSave();
 
 
-        if(maxWave != -1 && wave > maxWave) {
-            if(lives == 10) {
 
-    score += 500;
-    updateAndSave();
-}
-        updateAndSave();
-        running = false;
-JOptionPane.showMessageDialog(this,"VICTORY!");
-new MainMenu();
+       if(maxWave != -1 && wave > maxWave) {
+
+    if(lives == 10) {
+        score += 500;
+    }
+
+    saveAllData();
+
+    running = false;
+
+    JOptionPane.showMessageDialog(this,"VICTORY!");
+ 
+    music.stopMusic();
+    new MainMenu();
 javax.swing.SwingUtilities.getWindowAncestor(this).dispose();
         return;
     }
@@ -607,14 +588,7 @@ javax.swing.SwingUtilities.getWindowAncestor(this).dispose();
         if (lives <= 0) {
 
     lives = 0;
-
-    if (maxWave == -1) {
-        updateInfiniteRanking();
-        saveInfiniteRecord();
-    } else {
-        updateRecord();
-        saveRecord();
-    }
+    saveAllData();
 
     running = false;
 
@@ -627,9 +601,39 @@ javax.swing.SwingUtilities.getWindowAncestor(this).dispose();
     return;
 }
     }
+    private void saveAllData() {
 
-public void saveInfiniteOnlyIfNeeded() {
-    saveInfiniteRecord();
+    if (maxWave == -1) {
+
+        updateInfiniteRanking();
+        saveInfiniteRecord();
+
+    } else {
+
+        updateRecord();
+        saveRecord();
+    }
+}
+public void saveInfiniteRecord() {
+
+    try {
+
+        PrintWriter pw =
+            new PrintWriter("infinite.txt");
+
+        for(int i = 0; i < 4; i++) {
+
+            pw.println(infScore[i]);
+            pw.println(infWave[i]);
+            pw.println(infTime[i]);
+            pw.println(infLives[i]);
+        }
+
+        pw.close();
+
+    } catch(Exception e) {
+        e.printStackTrace();
+    }
 }
     public void spawnEnemies() {
     long currentTime = System.currentTimeMillis();
@@ -900,6 +904,8 @@ public void drawBuildPreview(Graphics2D g2) {
     startTime = System.currentTimeMillis();
     elapsedSeconds = 0;
     paused = false;
+    pausedAccumulatedTime = 0;
+    pauseStartTime = 0;
 }
 
     public boolean canBuild(int gridX, int gridY) {
@@ -984,22 +990,13 @@ public void mousePressed(MouseEvent e) {
         }
 
         if (restartButton.contains(p)) {
-
-    updateAndSave();
+            saveAllData();
 
     resetGame();
 }
+          if (exitButton.contains(p)) {
 
-        if (exitButton.contains(p)) {
-
-            if (maxWave == -1) {
-                updateInfiniteRanking();
-                saveInfiniteRecord();
-            } else {
-                updateRecord();
-                saveRecord();
-            }
-
+            saveAllData();
             running = false;
 
             music.stopMusic();
@@ -1129,27 +1126,7 @@ sc.useLocale(java.util.Locale.US);
         e.printStackTrace();
     }
 }
-public void saveInfiniteRecord() {
 
-    try {
-
-        java.io.PrintWriter pw =
-                new java.io.PrintWriter("infinite.txt");
-
-        for (int i = 0; i < 4; i++) {
-
-            pw.println(infScore[i]);
-            pw.println(infWave[i]);
-            pw.println(infTime[i]);
-            pw.println(infLives[i]);
-        }
-
-        pw.close();
-
-    } catch (Exception e) {
-        e.printStackTrace();
-    }
-}
 
     @Override public void mouseDragged(MouseEvent e){}
     @Override public void mouseClicked(MouseEvent e){}
