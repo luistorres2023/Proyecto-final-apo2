@@ -1,20 +1,37 @@
 package usc.edu;
 
+import java.awt.image.BufferedImage;
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 
 public class StartMenu extends JPanel implements MouseListener{
 
-Rectangle playBtn = new Rectangle(360,250,240,70);
-Rectangle infoBtn = new Rectangle(360,350,240,70);
-Rectangle historiaBtn = new Rectangle(360,450,240,70);
+Rectangle playBtn = new Rectangle(225, 570, 130, 55);
+Rectangle infoBtn = new Rectangle(400, 570, 130, 55);
+Rectangle historiaBtn = new Rectangle(570, 570, 130, 55);
+
+private BufferedImage backgroundImage;
 
 public StartMenu(){
 
     setPreferredSize(new Dimension(960,720));
 
     addMouseListener(this);
+
+    try {
+
+    backgroundImage = ImageIO.read(
+        getClass().getResourceAsStream(
+            "/assets/menu_background.png"
+        )
+    );
+
+} catch(Exception e) {
+
+    e.printStackTrace();
+}
 }
 
 protected void paintComponent(Graphics g){
@@ -23,24 +40,28 @@ protected void paintComponent(Graphics g){
 
     Graphics2D g2d = (Graphics2D) g;
 
-    g2d.setColor(Color.BLACK);
-    g2d.fillRect(0,0,960,720);
-    g2d.setColor(Color.WHITE);
-    g2d.setFont(MedievalFont.getFont(55f));
-    g2d.drawString("TOWER DEFENSE",180,140);
-    draw(g2d,playBtn,"JUGAR");
-    draw(g2d,infoBtn,"INFO");
-    draw(g2d,historiaBtn,"HISTORIA");
+    if(backgroundImage != null){
+
+    g2d.drawImage(
+        backgroundImage,
+        0,
+        0,
+        960,
+        720,
+        null
+    );
+
+}
 
 }
 
 void draw(Graphics2D g2,Rectangle r,String t){
 
-    g2.setColor(new Color(40,40,40));
+    g2.setColor(new Color(20,20,20,220));
 
     g2.fillRoundRect(r.x,r.y,r.width,r.height,20,20);
 
-    g2.setColor(new Color(235,190,90));
+    g2.setColor(new Color(255,215,120));
 
     g2.drawRoundRect(r.x,r.y,r.width,r.height,20,20);
 

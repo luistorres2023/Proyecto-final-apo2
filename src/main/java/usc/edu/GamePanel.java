@@ -18,15 +18,18 @@ import java.awt.Toolkit;
 import javax.imageio.ImageIO;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import java.awt.image.BufferedImage;
+import javax.imageio.ImageIO;
 
 import usc.edu.Main;
 import usc.edu.WaveMenu;
 import usc.edu.StartMenu;
 public class GamePanel extends JPanel implements Runnable, MouseListener, MouseMotionListener, KeyListener {
 
-    final int WIDTH = 1280;
-    
-    final int HEIGHT = 720;
+    private BufferedImage mapImage;
+
+    final int WIDTH = 1600;
+    final int HEIGHT = 900;
     final int TILE_SIZE = 64;
     final int ROWS = HEIGHT / TILE_SIZE;
     final int COLS = WIDTH / TILE_SIZE;
@@ -136,33 +139,30 @@ public class GamePanel extends JPanel implements Runnable, MouseListener, MouseM
         setFocusable(true);
         requestFocusInWindow();
         setBackground(Color.BLACK);
+
         createMap();
         createPath();
-        createLavaBlocks();
         loadImages();
+
+try {
+
+    mapImage = ImageIO.read(
+        getClass().getResourceAsStream(
+            "/assets/mapa.png"
+        )
+    );
+
+} catch(Exception e) {
+
+    e.printStackTrace();
+}
         
 
         gameThread = new Thread(this);
         gameThread.start();
     }
-    public void createLavaBlocks() {
 
-    int totalBlocks = (int)(Math.random() * 11) + 10;
-    int count = 0;
-
-    while(count < totalBlocks) {
-
-        int row = (int)(Math.random() * ROWS);
-        int col = (int)(Math.random() * COLS);
-
-        if(map[row][col] == 0) {
-
-            map[row][col] = 2;
-            count++;
-        }
-    }
-}
-   public void updateInfiniteRanking() {
+    public void updateInfiniteRanking() {
 
     for(int i = 0; i < 4; i++){
 
@@ -269,13 +269,30 @@ public void saveRecord() {
 
     public void createPath() {
 
-        pathPoints.clear();
-        pathPoints.add(new Point(0, 4));
-        pathPoints.add(new Point(0, 1));
-        pathPoints.add(new Point(10, 1));
-        pathPoints.add(new Point(10, 7));
-        pathPoints.add(new Point(14, 7));
+    pathPoints.clear();
+
+    pathPoints.add(new Point(0, 4));   
+
+    pathPoints.add(new Point(5, 4));  
+
+    pathPoints.add(new Point(5, 8));  
+
+    pathPoints.add(new Point(10, 8));  
+
+    pathPoints.add(new Point(10, 3)); 
+
+    pathPoints.add(new Point(14, 3));  
+
+    pathPoints.add(new Point(14, 8));  
+
+    pathPoints.add(new Point(20, 8));  
+
+    pathPoints.add(new Point(20, 5));  
+
+    pathPoints.add(new Point(24, 5)); 
+
     }
+
 public int getRecord(int waves) {
 
     if(waves == 10) return record10;
@@ -313,19 +330,52 @@ public double getLives(int waves) {
 
     public void createMap() {
 
-        for (int row = 1; row <= 4; row++) {
-            map[row][0] = 1;
-        }
-        for (int col = 0; col <= 10; col++) {
-            map[1][col] = 1;
-        }
-        for (int row = 1; row <= 7; row++) {
-            map[row][10] = 1;
-        }
-        for (int col = 10; col <= 14; col++) {
-            map[7][col] = 1;
-        }
-    }
+    map = new int[ROWS][COLS];
+
+
+
+    for(int col = 0; col <= 5; col++)
+        map[4][col] = 1;
+
+
+
+    for(int row = 4; row <= 8; row++)
+        map[row][5] = 1;
+
+
+
+    for(int col = 5; col <= 10; col++)
+        map[8][col] = 1;
+
+
+
+    for(int row = 3; row <= 8; row++)
+        map[row][10] = 1;
+
+
+
+    for(int col = 10; col <= 15; col++)
+        map[3][col] = 1;
+
+
+
+    for(int row = 3; row <= 8; row++)
+        map[row][15] = 1;
+
+
+    for(int col = 15; col <= 20; col++)
+        map[8][col] = 1;
+
+
+
+    for(int row = 5; row <= 8; row++)
+        map[row][20] = 1;
+
+
+
+    for(int col = 20; col <= 24; col++)
+        map[5][col] = 1;
+}
 
     public void loadImages() {
 
@@ -645,6 +695,8 @@ protected void paintComponent(Graphics g) {
 
     drawMap(g2);
 
+    drawBuildPreview(g2);
+    
     for (Tower tower : new ArrayList<>(towers)) {
         tower.draw(g2);
     }
@@ -666,36 +718,33 @@ protected void paintComponent(Graphics g) {
 }
 
     public void drawMap(Graphics2D g2) {
-    if(grassImg == null || pathImg == null || LavaImg == null){
-    return;
-}
 
-    for(int row = 0; row < ROWS; row++) {
+    if(mapImage != null) {
 
-        for(int col = 0; col < COLS; col++) {
-
-            int x = col * TILE_SIZE;
-            int y = row * TILE_SIZE;
-
-            if(map[row][col] == 0) {
-
-                g2.drawImage(grassImg,x,y,TILE_SIZE,TILE_SIZE,null);
-
-            } else if(map[row][col] == 1) {
-
-                g2.drawImage(pathImg,x,y,TILE_SIZE,TILE_SIZE,null);
-
-            } else {
-
-                g2.drawImage(LavaImg,x,y,TILE_SIZE,TILE_SIZE,null);
-            }
-        }
+        g2.drawImage(
+            mapImage,
+            0,
+            0,
+            WIDTH,
+            HEIGHT,
+            null
+        );
     }
-
-         g2.setColor(Color.WHITE);
 }
+
 
     public void drawUI(Graphics2D g2) {
+
+        g2.setColor(new Color(40,40,40,220));
+
+g2.fillRoundRect(
+        WIDTH - 320,
+        10,
+        310,
+        130,
+        20,
+        20
+);
 
     g2.setFont(new Font("Arial", Font.BOLD, 22));
     g2.setColor(Color.WHITE);
@@ -711,9 +760,9 @@ int min = elapsedSeconds / 60;
 int sec = elapsedSeconds % 60;
 String tiempo = String.format("%02d:%02d", min, sec);
 
-g2.drawString(tiempo, WIDTH - 180, 120);
-g2.drawString("RECORD: " + getCurrentRecord(), WIDTH - 180, 80);
-g2.drawString("SCORE: " + score, WIDTH - 180, 100);
+g2.drawString(tiempo, WIDTH - 280, 135);
+g2.drawString("RECORD: " + getCurrentRecord(), WIDTH - 280, 85);
+g2.drawString("SCORE: " + score, WIDTH - 280, 110);
     g2.setColor(new Color(40,40,40));
     g2.fillRect(0, HEIGHT - 100, WIDTH, 140);
     g2.setColor(Color.WHITE);
@@ -750,6 +799,64 @@ g2.drawString("SCORE: " + score, WIDTH - 180, 100);
     g2.drawString("$100",565,HEIGHT - 10);
 }
 
+public void drawBuildPreview(Graphics2D g2) {
+
+    int x = mouseGridX * TILE_SIZE;
+    int y = mouseGridY * TILE_SIZE;
+
+    if(y >= HEIGHT - 100)
+    return;
+
+    BufferedImage previewImg = null;
+
+    if(selectedTower == 1)
+        previewImg = tower1Img;
+
+    if(selectedTower == 2)
+        previewImg = tower4Img;
+
+    if(selectedTower == 3)
+        previewImg = tower3Img;
+
+    if(selectedTower == 4)
+        previewImg = tower2Img;
+
+    if(previewImg == null)
+        return;
+
+    boolean valid = canBuild(mouseGridX, mouseGridY);
+
+    if(valid)
+        g2.setColor(new Color(0,255,0,80));
+    else
+        g2.setColor(new Color(255,0,0,80));
+
+    g2.fillRect(x,y,TILE_SIZE,TILE_SIZE);
+
+    g2.setComposite(
+        java.awt.AlphaComposite.getInstance(
+            java.awt.AlphaComposite.SRC_OVER,
+            0.5f
+        )
+    );
+
+    g2.drawImage(
+        previewImg,
+        x,
+        y,
+        TILE_SIZE,
+        TILE_SIZE,
+        null
+    );
+
+    g2.setComposite(
+        java.awt.AlphaComposite.getInstance(
+            java.awt.AlphaComposite.SRC_OVER,
+            1.0f
+        )
+    );
+}
+
     public void drawPauseMenu(Graphics2D g2) {
 
         g2.setColor(new Color(0,0,0,180));
@@ -783,7 +890,6 @@ g2.drawString("SCORE: " + score, WIDTH - 180, 100);
 
     createMap();
     createPath();
-    createLavaBlocks();
 
     money = 200;
     lives = 10;
@@ -798,18 +904,72 @@ g2.drawString("SCORE: " + score, WIDTH - 180, 100);
 
     public boolean canBuild(int gridX, int gridY) {
 
-        if (gridX < 0 || gridY < 0 || gridX >= COLS || gridY >= ROWS)
-            return false;
-        if(map[gridY][gridX] == 1 || map[gridY][gridX] == 2)
-    return false;
-       for (Tower tower : new ArrayList<>(towers)){
-            if (tower.gridX == gridX &&
-                    tower.gridY == gridY)
-                return false;
-        }
+    if(gridX < 0 || gridY < 0 ||
+       gridX >= COLS || gridY >= ROWS)
+        return false;
 
-        return true;
+
+    if(gridY >= 3 && gridY <= 5 &&
+       gridX <= 6)
+        return false;
+
+    if(gridX >= 4 && gridX <= 6 &&
+       gridY >= 4 && gridY <= 9)
+        return false;
+
+    if(gridY >= 7 && gridY <= 9 &&
+       gridX >= 4 && gridX <= 11)
+        return false;
+
+
+    if(gridX >= 9 && gridX <= 11 &&
+       gridY >= 3 && gridY <= 9)
+        return false;
+
+    if(gridY >= 2 && gridY <= 4 &&
+       gridX >= 9 && gridX <= 15)
+        return false;
+
+    if(gridX >= 13 && gridX <= 15 &&
+       gridY >= 2 && gridY <= 9)
+        return false;
+
+
+    if(gridY >= 7 && gridY <= 9 &&
+       gridX >= 13 && gridX <= 21)
+        return false;
+
+    if(gridX >= 19 && gridX <= 21 &&
+       gridY >= 4 && gridY <= 9)
+        return false;
+
+    if(gridY >= 4 && gridY <= 6 &&
+       gridX >= 19)
+        return false;
+
+
+    if(gridX <= 3 && gridY <= 3)
+        return false;
+
+    if(gridX >= 21 && gridY <= 3)
+        return false;
+
+    if(gridX <= 3 && gridY >= 10)
+        return false;
+
+    if(gridX >= 21 && gridY >= 10)
+        return false;
+
+
+    for(Tower tower : towers) {
+
+        if(tower.gridX == gridX &&
+           tower.gridY == gridY)
+            return false;
     }
+
+    return true;
+}
 
 
 @Override
