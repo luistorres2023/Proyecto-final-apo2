@@ -1,4 +1,7 @@
 con este codigo se ejecuta:
+(todo lo de abajo es "innecesario" si sale error lo mas probable es que sea por estas dos lineas en game panel: 
+import main.java.usc.edu.MainMenu;
+import main.java.usc.edu.MedievalFont; simplemente se borran y ya dejo lo de abajo por si llega a ser necesario)
 mvn compile exec:java "-Dexec.mainClass=usc.edu.Main"
 si sale error posiblemente con esto se solucione:
 dir
