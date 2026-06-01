@@ -1049,8 +1049,9 @@ public void mousePressed(MouseEvent e) {
             running = false;
 
             music.stopMusic();
-
+                
             new WaveMenu();
+            music.playMusic("/assets/music/magodeoz.wav");
             javax.swing.SwingUtilities.getWindowAncestor(this).dispose();
         }
 
