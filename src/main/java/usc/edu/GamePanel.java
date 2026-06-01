@@ -837,6 +837,35 @@ public void drawBuildPreview(Graphics2D g2) {
 
     g2.fillRect(x,y,TILE_SIZE,TILE_SIZE);
 
+    int range = getPreviewRange();
+
+int centerX = x + TILE_SIZE / 2;
+int centerY = y + TILE_SIZE / 2;
+
+if(valid)
+    g2.setColor(new Color(0,255,0,30));
+else
+    g2.setColor(new Color(255,0,0,30));
+
+g2.fillOval(
+    centerX - range,
+    centerY - range,
+    range * 2,
+    range * 2
+);
+
+if(valid)
+    g2.setColor(new Color(0,255,0,120));
+else
+    g2.setColor(new Color(255,0,0,120));
+
+g2.drawOval(
+    centerX - range,
+    centerY - range,
+    range * 2,
+    range * 2
+);
+
     g2.setComposite(
         java.awt.AlphaComposite.getInstance(
             java.awt.AlphaComposite.SRC_OVER,
@@ -859,6 +888,26 @@ public void drawBuildPreview(Graphics2D g2) {
             1.0f
         )
     );
+}
+
+private int getPreviewRange() {
+
+    switch(selectedTower) {
+
+        case 1:
+            return 180;
+
+        case 2:
+            return 245;
+
+        case 3:
+            return 250;
+
+        case 4:
+            return 350;
+    }
+
+    return 150;
 }
 
     public void drawPauseMenu(Graphics2D g2) {

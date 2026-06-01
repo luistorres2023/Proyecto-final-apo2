@@ -15,7 +15,6 @@ import usc.edu.StartMenu;
 public class WaveMenu extends JFrame {
 
     private BufferedImage fondo;
-    private Clip music;
 
     private int[] infScore = new int[4];
     private int[] infWave = new int[4];
@@ -55,8 +54,6 @@ public class WaveMenu extends JFrame {
             e.printStackTrace();
         }
 
-        playMusic();
-
         setTitle("Select Waves");
         setSize(1000, 650);
         setResizable(false);
@@ -77,10 +74,6 @@ public class WaveMenu extends JFrame {
                 g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
                         RenderingHints.VALUE_ANTIALIAS_ON);
 
-                g2.setFont(MedievalFont.getFont(40f));
-                g2.setColor(Color.BLACK);
-                g2.drawString("SELECT WAVES", 80, 80);
-
                 drawTable(g2);
                 drawInfinite(g2);
             }
@@ -91,7 +84,7 @@ public class WaveMenu extends JFrame {
         JPanel buttons = new JPanel();
         buttons.setOpaque(false);
         buttons.setLayout(new BoxLayout(buttons, BoxLayout.Y_AXIS));
-        buttons.setBounds(40, 90, 350, 450);
+        buttons.setBounds(145, 135, 280, 560);
 
         addButton(buttons, "10 WAVES", 10);
         addButton(buttons, "20 WAVES", 20);
@@ -102,16 +95,15 @@ public class WaveMenu extends JFrame {
         JButton back = createButton("BACK");
 
         back.addActionListener(e -> {
-            stopMusic();
-            dispose();
+    dispose();
 
-            Main.frame = new JFrame("Tower Defense");
-            Main.frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-            Main.frame.setContentPane(new StartMenu());
-            Main.frame.pack();
-            Main.frame.setLocationRelativeTo(null);
-            Main.frame.setVisible(true);
-        });
+    Main.frame = new JFrame("Tower Defense");
+    Main.frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+    Main.frame.setContentPane(new StartMenu());
+    Main.frame.pack();
+    Main.frame.setLocationRelativeTo(null);
+    Main.frame.setVisible(true);
+});
 
         buttons.add(Box.createVerticalStrut(10));
         buttons.add(back);
@@ -124,41 +116,22 @@ public class WaveMenu extends JFrame {
    
     private void drawTable(Graphics2D g2) {
 
-    int baseX = 450, baseY = 90;
+int baseX = 520;
+int baseY = 110;
 
-    int width = 420;
-    int height = 240;
-
-    g2.setColor(new Color(0, 0, 0, 120));
-    g2.fillRect(baseX - 20, baseY + 20, width, height);
-
-    g2.setFont(MedievalFont.getFont(25f));
-    g2.setColor(Color.BLACK);
-    g2.drawString("CLASIFICACION", baseX, baseY);
-
-    g2.setFont(MedievalFont.getFont(20f));
+    g2.setFont(MedievalFont.getFont(16f));
     g2.setColor(Color.WHITE);
 
-    g2.drawRect(baseX - 20, baseY + 20, width, height);
 
-    g2.drawLine(baseX + 60, baseY + 20, baseX + 60, baseY + 260);
-    g2.drawLine(baseX + 170, baseY + 20, baseX + 170, baseY + 260);
-    g2.drawLine(baseX + 290, baseY + 20, baseX + 290, baseY + 260);
+    g2.drawString("Wave", baseX + 10, baseY + 30);
+    g2.drawString("Record", baseX + 60, baseY + 30);
+    g2.drawString("Tiempo", baseX + 135, baseY + 30);
+    g2.drawString("Vidas", baseX + 215, baseY + 30);
 
-    g2.drawLine(baseX - 20, baseY + 60, baseX + 400, baseY + 60);
-    g2.drawLine(baseX - 20, baseY + 110, baseX + 400, baseY + 110);
-    g2.drawLine(baseX - 20, baseY + 160, baseX + 400, baseY + 160);
-    g2.drawLine(baseX - 20, baseY + 210, baseX + 400, baseY + 210);
-
-    g2.drawString("Wave", baseX + 10, baseY + 50);
-    g2.drawString("Record", baseX + 80, baseY + 50);
-    g2.drawString("Tiempo", baseX + 190, baseY + 50);
-    g2.drawString("Vidas", baseX + 320, baseY + 50);
-
-    drawRow(g2, "10", record10, time10, lives10, baseX, baseY + 95);
-    drawRow(g2, "20", record20, time20, lives20, baseX, baseY + 145);
-    drawRow(g2, "30", record30, time30, lives30, baseX, baseY + 195);
-    drawRow(g2, "40", record40, time40, lives40, baseX, baseY + 245);
+drawRow(g2, "10", record10, time10, lives10, baseX, baseY + 60);
+drawRow(g2, "20", record20, time20, lives20, baseX, baseY + 90);
+drawRow(g2, "30", record30, time30, lives30, baseX, baseY + 120);
+drawRow(g2, "40", record40, time40, lives40, baseX, baseY + 150);
 }
 private void drawRow(Graphics2D g2, String wave,
                      int record, int time, double lives,
@@ -167,9 +140,9 @@ private void drawRow(Graphics2D g2, String wave,
     g2.setFont(MedievalFont.getFont(20f));
     g2.setColor(Color.WHITE);
     g2.drawString(wave, baseX + 10, y);
-    g2.drawString(String.valueOf(record), baseX + 90, y);
-    g2.drawString(formatTime(time), baseX + 190, y);
-    g2.drawString(String.valueOf(lives), baseX + 320, y);
+    g2.drawString(String.valueOf(record), baseX + 60, y);
+    g2.drawString(formatTime(time), baseX + 135, y);
+    g2.drawString(String.valueOf(lives), baseX + 215, y);
 }
 private void sortInfinite() {
 
@@ -201,24 +174,16 @@ private void sortInfinite() {
 
     sortInfinite();
 
-    int topX = 450, topY = 390;
-    int width = 460;   
-    int height = 190;
-
-    g2.setColor(new Color(0, 0, 0, 120));
-    g2.fillRect(topX - 20, topY + 20, width, height);
-
-    g2.setFont(MedievalFont.getFont(25f));
-    g2.setColor(Color.BLACK);
-    g2.drawString("TOP 4 INFINITE", topX, topY);
+int topX = 480;
+int topY = 340;
 
     int colPos   = topX;
-    int colScore = topX + 55;
-    int colWave  = topX + 155;
-    int colTime  = topX + 255;
-    int colLives = topX + 355;
+    int colScore = topX + 45;
+    int colWave  = topX + 120;
+    int colTime  = topX + 200;
+    int colLives = topX + 270;
 
-    g2.setFont(MedievalFont.getFont(18f));
+    g2.setFont(MedievalFont.getFont(15f));
     g2.setColor(Color.WHITE);
 
     int headerY = topY + 45;
@@ -231,7 +196,7 @@ private void sortInfinite() {
 
     for (int i = 0; i < 4; i++) {
 
-        int y = topY + 90 + (i * 40);
+        int y = topY + 70 + (i * 40);
 
         g2.drawString((i + 1) + "°", colPos, y);
         g2.drawString(String.valueOf(infScore[i]), colScore, y);
@@ -241,15 +206,6 @@ private void sortInfinite() {
     }
 
     g2.setColor(Color.WHITE);
-    g2.drawRect(topX - 20, topY + 20, width, height);
-    g2.drawLine(colScore - 10, topY + 20, colScore - 10, topY + 210);
-    g2.drawLine(colWave - 10, topY + 20, colWave - 10, topY + 210);
-    g2.drawLine(colTime - 10, topY + 20, colTime - 10, topY + 210);
-    g2.drawLine(colLives - 10, topY + 20, colLives - 10, topY + 210);
-    g2.drawLine(topX - 20, topY + 60, topX - 20 + width, topY + 60);
-    g2.drawLine(topX - 20, topY + 100, topX - 20 + width, topY + 100);
-    g2.drawLine(topX - 20, topY + 140, topX - 20 + width, topY + 140);
-    g2.drawLine(topX - 20, topY + 180, topX - 20 + width, topY + 180);
 }
     private void loadInfinite() {
     try {
@@ -342,63 +298,47 @@ for (int i = 0; i < 4; i++) {
         }
     }
 
-    private JButton createButton(String text) {
-        JButton b = new JButton(text);
+private JButton createButton(String text) {
 
-        b.setFont(MedievalFont.getFont(30f));
-        b.setForeground(Color.WHITE);
-        b.setBackground(new Color(20, 20, 20, 220));
-        b.setFocusPainted(false);
+    JButton b = new JButton(text);
 
-        b.setMaximumSize(new Dimension(320, 60));
+    b.setOpaque(false);
+    b.setContentAreaFilled(false);
+    b.setBorderPainted(false);
+    b.setFocusPainted(false);
 
-        return b;
-    }
+    b.setForeground(new Color(0,0,0,0));
+
+b.setMaximumSize(new Dimension(260, 48));
+b.setPreferredSize(new Dimension(260, 48));
+
+    return b;
+}
 
     private void addButton(JPanel panel, String text, int waves) {
         JButton b = createButton(text);
 
         b.addActionListener(e -> {
-            stopMusic();
 
-            JFrame gameFrame = new JFrame("Tower Defense");
-            GamePanel game = new GamePanel(waves);
+    Main.soundManager.stopMusic();
 
-            gameFrame.setContentPane(game);
-            gameFrame.pack();
-            gameFrame.setLocationRelativeTo(null);
-            gameFrame.setVisible(true);
+    JFrame gameFrame = new JFrame("Tower Defense");
+    GamePanel game = new GamePanel(waves);
 
-            dispose();
-        });
+    gameFrame.setContentPane(game);
+    gameFrame.pack();
+    gameFrame.setLocationRelativeTo(null);
+    gameFrame.setVisible(true);
+
+    dispose();
+});
 
         panel.add(b);
-        panel.add(Box.createVerticalStrut(12));
+        panel.add(Box.createVerticalStrut(24));
     }
 
     private String formatTime(int seconds) {
         return String.format("%d:%02d", seconds / 60, seconds % 60);
     }
 
-    private void playMusic() {
-        try {
-            AudioInputStream audio = AudioSystem.getAudioInputStream(
-                    getClass().getResource("/assets/music/magodeoz.wav"));
-
-            music = AudioSystem.getClip();
-            music.open(audio);
-            music.loop(Clip.LOOP_CONTINUOUSLY);
-            music.start();
-
-        } catch (Exception e) {
-            System.out.println("No se pudo cargar la musica");
-        }
-    }
-
-    private void stopMusic() {
-        if (music != null) {
-            music.stop();
-            music.close();
-        }
-    }
 }

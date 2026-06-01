@@ -3,9 +3,10 @@ package usc.edu;
 import javax.sound.sampled.*;
 import java.net.URL;
 
+
 public class SoundManager {
 
-    private Clip clip;
+    private static Clip clip;
 
     public void playMusic(String path) {
 

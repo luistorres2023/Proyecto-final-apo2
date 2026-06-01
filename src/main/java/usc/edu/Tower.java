@@ -75,8 +75,6 @@ public class Tower {
     if(!alive)
         return;
     g2.drawImage(sprite,x,y,64,64,null);
-    g2.setColor(new Color(255,255,255,7));
-    g2.fillOval(x + 32 - range, y + 32 - range, range * 2, range * 2);
     g2.setColor(Color.RED);
     g2.fillRect(x + 12,y - 10,40,5);
     g2.setColor(Color.GREEN);

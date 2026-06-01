@@ -8,6 +8,8 @@ import java.awt.event.*;
 
 public class StartMenu extends JPanel implements MouseListener{
 
+    SoundManager music = new SoundManager();
+
 Rectangle playBtn = new Rectangle(225, 570, 130, 55);
 Rectangle infoBtn = new Rectangle(400, 570, 130, 55);
 Rectangle historiaBtn = new Rectangle(570, 570, 130, 55);
@@ -19,6 +21,8 @@ public StartMenu(){
     setPreferredSize(new Dimension(960,720));
 
     addMouseListener(this);
+
+    music.playMusic("/assets/music/magodeoz.wav");
 
     try {
 

@@ -84,8 +84,8 @@ public class Enemy {
             int dy = Math.abs(tower.gridY - enemyGridY);
 
             boolean adjacent =
-                    (dx == 1 && dy == 0) ||
-                    (dx == 0 && dy == 1);
+                    (dx == 2 && dy == 0) ||
+                    (dx == 0 && dy == 2);
 
             if(adjacent) {
 
