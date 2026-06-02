@@ -17,6 +17,7 @@ usc\edu\SniperTower.class
 usc\edu\MainMenu.class
 usc\edu\FastEnemy.class
 usc\edu\TankEnemy.class
+usc\edu\GameSave$EnemigoGuardado.class
 usc\edu\Historia.class
 usc\edu\MagicTower.class
 usc\edu\WaveMenu.class

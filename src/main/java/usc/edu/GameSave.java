@@ -8,7 +8,6 @@ public class GameSave {
 
     private static final String ARCHIVO = "savegame.dat";
 
-    // ─── Objeto que se serializa ──────────────────────────────────────────
     private static class Estado implements Serializable {
         private static final long serialVersionUID = 2L;
 
@@ -22,18 +21,36 @@ public class GameSave {
         int    elapsedSeconds;
 
         ArrayList<TorreGuardada> torres = new ArrayList<>();
+        ArrayList<EnemigoGuardado> enemigos = new ArrayList<>();
     }
 
     private static class TorreGuardada implements Serializable {
         private static final long serialVersionUID = 1L;
-        int tipo;   // 1=Basic  2=SlowDown  3=Magic  4=Sniper
+        int tipo;   
         int gridX;
         int gridY;
+        int hp;
 
-        TorreGuardada(int tipo, int gridX, int gridY) {
+        TorreGuardada(int tipo, int gridX, int gridY, int hp) {
             this.tipo  = tipo;
             this.gridX = gridX;
             this.gridY = gridY;
+            this.hp    =hp;
+        }
+    }
+    private static class EnemigoGuardado implements Serializable {
+        private static final long serialVersionUID = 1L;
+        int tipo;
+        int hp;
+        double x;
+        double y;
+        int pathIndex;
+        EnemigoGuardado(int tipo, int hp, double x, double y, int pathIndex) {
+            this.tipo = tipo;
+            this.hp = hp;
+            this.x = x;
+            this.y = y;
+            this.pathIndex = pathIndex;
         }
     }
 
@@ -57,8 +74,19 @@ public class GameSave {
             else if (t instanceof MagicTower)    tipo = 3;
             else if (t instanceof SniperTower)   tipo = 4;
             else continue;
-            e.torres.add(new TorreGuardada(tipo, t.gridX, t.gridY));
+            e.torres.add(new TorreGuardada(tipo, t.gridX, t.gridY, t.hp));
         }
+        for (Enemy enemy : gp.enemies) {
+    int tipo;
+    if (enemy instanceof NormalEnemy) tipo = 1;
+    else if (enemy instanceof FastEnemy) tipo = 2;
+    else if (enemy instanceof TankEnemy) tipo = 3;
+    else if (enemy instanceof Witch) tipo = 4;
+    else if (enemy instanceof NIGROMANTE) tipo = 5;
+    else continue;
+
+    e.enemigos.add(new EnemigoGuardado(tipo, enemy.hp, enemy.x, enemy.y, enemy.pathIndex));
+}
 
 
         try (ObjectOutputStream oos = new ObjectOutputStream(
@@ -89,15 +117,33 @@ public class GameSave {
             gp.enemiesSpawned = e.enemiesSpawned;
             gp.enemiesPerWave = e.enemiesPerWave;
 
-            // El reloj continúa desde donde se quedó
             gp.startTime             = System.currentTimeMillis() - (long) e.elapsedSeconds * 1000L;
             gp.pausedAccumulatedTime = 0;
 
             gp.towers.clear();
             for (TorreGuardada tg : e.torres) {
                 Tower t = crearTorre(tg.tipo, tg.gridX, tg.gridY, gp);
-                if (t != null) gp.towers.add(t);
+                if (t != null) {
+                        t.hp = tg.hp;
+                    gp.towers.add(t);
+                }
             }
+            gp.enemies.clear();
+
+for(EnemigoGuardado eg:e.enemigos){
+
+    Enemy enemy=crearEnemigo(eg.tipo,gp);
+
+    if(enemy!=null){
+
+        enemy.hp=eg.hp;
+        enemy.x=eg.x;
+        enemy.y=eg.y;
+        enemy.pathIndex=eg.pathIndex;
+
+        gp.enemies.add(enemy);
+    }
+}
 
             System.out.println("[GameSave] Cargado: oleada=" + gp.wave
                     + " vidas=" + gp.lives + " torres=" + gp.towers.size());
@@ -109,7 +155,6 @@ public class GameSave {
             return false;
         }
     }
-
     
     public static int getMaxWaveGuardado() {
 
@@ -146,4 +191,14 @@ public class GameSave {
             default: return null;
         }
     }
+    private static Enemy crearEnemigo(int tipo, GamePanel gp) {
+    switch (tipo) {
+        case 1: return new NormalEnemy(0, 4 * gp.TILE_SIZE, gp.normalenemyImg);
+        case 2: return new FastEnemy(0, 4 * gp.TILE_SIZE, gp.fastEnemyImg);
+        case 3: return new TankEnemy(0, 4 * gp.TILE_SIZE, gp.tankEnemyImg);
+        case 4: return new Witch(0, 4 * gp.TILE_SIZE, gp.witchImg);
+        case 5: return new NIGROMANTE(0, 4 * gp.TILE_SIZE, gp.NIGROMANTEImg);
+        default: return null;
+    }
+}
 }
