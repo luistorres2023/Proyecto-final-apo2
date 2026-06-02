@@ -19,7 +19,9 @@ public class Tower {
     int hp;
     int maxHp;
     boolean alive = true;
+    double animTime = Math.random() * 10;
     double scoreMultiplier = 1.0;
+    double shootAnim = 0;
 
     public Tower(int gridX,int gridY,int range,int damage,long fireRate,BufferedImage sprite) {
 
@@ -36,6 +38,10 @@ public class Tower {
     }
 
     public void update(ArrayList<Enemy> enemies,ArrayList<Bullet> bullets) {
+
+        animTime += 0.07;
+        if(shootAnim > 0)
+    shootAnim -= 0.5;
 
         long currentTime =System.currentTimeMillis();
 
@@ -61,20 +67,36 @@ public class Tower {
 
                 target = enemy;
             }
+
         }
 
         if (target != null) {
 
             GamePanel.bulletsToAdd.add(new Bullet(x,y,target,damage,bulletSprite,bulletSize,this));
         
+            shootAnim = 8;
             lastShot = currentTime;
         }
+
     }
 
    public void draw(Graphics2D g2) {
     if(!alive)
         return;
-    g2.drawImage(sprite,x,y,64,64,null);
+    int size = 64
+         + (int)(Math.sin(animTime) * 5)
+        + (int)shootAnim;
+
+int offset = (64 - size) / 2;
+
+g2.drawImage(
+    sprite,
+    x + offset,
+    y + offset,
+    size,
+    size,
+    null
+);
     g2.setColor(Color.RED);
     g2.fillRect(x + 12,y - 10,40,5);
     g2.setColor(Color.GREEN);

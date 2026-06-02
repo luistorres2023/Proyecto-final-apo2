@@ -530,7 +530,7 @@ public class GamePanel extends JPanel implements Runnable, MouseListener, MouseM
 
                     if (enemy.hp <= 0) {
 
-                        enemy.alive = false;
+                enemy.alive = false;
 
                         if (enemy instanceof TankEnemy) {
                             money += 15;

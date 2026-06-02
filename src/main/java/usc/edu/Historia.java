@@ -81,7 +81,7 @@ public class Historia extends JFrame {
 
         doc.setParagraphAttributes(0, doc.getLength(), center, false);
 
-        historia.setForeground(new Color(20,10,0));
+        historia.setForeground(new Color(255,248,220));
 
         historia.setFont(MedievalFont.getFont(30f));
 

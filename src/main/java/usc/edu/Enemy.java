@@ -19,6 +19,8 @@ public class Enemy {
     int points = 10;
     int lastGridX = -1;
     int lastGridY = -1;
+    double animTime = Math.random() * 10;
+    double animOffset = 0;
 
     public Enemy(double x,double y,int hp,double speed,int towerDamage,BufferedImage sprite) {
         this.x = x;
@@ -62,6 +64,7 @@ public class Enemy {
     y += dy * speed;
 
     damageTowers();
+    animTime += 0.15;
 }
 
     public void damageTowers() {
@@ -107,7 +110,57 @@ public class Enemy {
     if (!alive)
         return;
 
-    g2.drawImage(sprite, (int)x, (int)y, 48, 48, null);
+    int drawY = (int)y;
+
+if(this instanceof FastEnemy){
+
+    animOffset = Math.sin(animTime * 2.5) * 4;
+
+}
+else if(this instanceof TankEnemy){
+
+    animOffset = Math.sin(animTime * 1.2) * 3;
+
+}
+else if(this instanceof Witch){
+
+    animOffset = Math.sin(animTime * 1.5) * 6;
+
+}
+else if(this instanceof NIGROMANTE){
+
+    animOffset = Math.sin(animTime) * 8;
+
+}
+else{
+
+    animOffset = Math.sin(animTime * 1.8) * 3;
+}
+
+drawY += (int)animOffset;
+
+if(this instanceof NIGROMANTE){
+
+    int auraSize = 55 + (int)(Math.sin(animTime * 2) * 5);
+
+    g2.setColor(new Color(0,180,0,90));
+
+    g2.fillOval(
+        (int)x - 4,
+        drawY - 4,
+        auraSize,
+        auraSize
+    );
+}
+
+g2.drawImage(
+    sprite,
+    (int)x,
+    drawY,
+    48,
+    48,
+    null
+);
 
     if (slowed) {
 

@@ -16,6 +16,8 @@ public class SlowDownTower extends Tower{
 @Override
 public void update(ArrayList<Enemy> enemies,ArrayList<Bullet> bullets){
 
+    animTime += 0.07;
+
     long currentTime=System.currentTimeMillis();
 
     if(currentTime-lastShot<fireRate)
@@ -57,6 +59,7 @@ public void update(ArrayList<Enemy> enemies,ArrayList<Bullet> bullets){
 }).start();
 
     GamePanel.bulletsToAdd.add(new Bullet(x+32, y+32, target, damage, bulletSprite, bulletSize,this));
+    shootAnim = 8;
     lastShot=currentTime;
         }
     }

@@ -109,10 +109,9 @@ public class WaveMenu extends JFrame {
         if (GameSave.existe()) {
             JButton continuar = new JButton("CONTINUAR");
             continuar.setFont(MedievalFont.getFont(20f));
-            continuar.setForeground(Color.WHITE);
-            continuar.setOpaque(true);
-            continuar.setContentAreaFilled(true);
-            continuar.setBackground(new Color(60, 60, 60));
+            continuar.setForeground(new Color(0, 0, 0, 0));
+            continuar.setOpaque(false);
+            continuar.setContentAreaFilled(false);
             continuar.setBorderPainted(false);
             continuar.setFocusPainted(false);
             continuar.setBounds(305, 510, 160, 48); 

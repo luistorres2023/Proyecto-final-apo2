@@ -18,6 +18,27 @@ public class InfoWindow extends JFrame{
         JTabbedPane tabs=new JTabbedPane();
 
         tabs.setUI(new BasicTabbedPaneUI(){
+
+@Override
+protected void paintTabBackground(
+        Graphics g,
+        int tabPlacement,
+        int tabIndex,
+        int x,
+        int y,
+        int w,
+        int h,
+        boolean isSelected) {
+
+    if (isSelected) {
+        g.setColor(new Color(120, 120, 120)); 
+    } else {
+        g.setColor(new Color(60, 60, 60)); 
+    }
+
+    g.fillRect(x, y, w, h);
+}
+
             @Override protected void paintContentBorder(Graphics g,int tabPlacement,int selectedIndex){}
             @Override protected void paintTabBorder(Graphics g,int tabPlacement,int tabIndex,int x,int y,int w,int h,boolean isSelected){}
             @Override protected void paintFocusIndicator(Graphics g,int tabPlacement,Rectangle[] rects,int tabIndex,Rectangle iconRect,Rectangle textRect,boolean isSelected){}
@@ -39,6 +60,8 @@ public class InfoWindow extends JFrame{
         enemyScroll.getVerticalScrollBar().setUnitIncrement(16);
         tabs.add("Towers",towerScroll);
         tabs.add("Enemies",enemyScroll);
+        tabs.setBackgroundAt(0, new Color(60, 60, 60));
+        tabs.setBackgroundAt(1, new Color(60, 60, 60));
         ((JScrollPane)tabs.getComponentAt(0)).setBorder(null);
         ((JScrollPane)tabs.getComponentAt(0)).getViewport().setOpaque(false);
         ((JScrollPane)tabs.getComponentAt(0)).setOpaque(false);
