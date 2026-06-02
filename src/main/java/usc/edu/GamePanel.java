@@ -593,6 +593,7 @@ public class GamePanel extends JPanel implements Runnable, MouseListener, MouseM
 
             lives = 0;
             GameSave.borrar();
+            saveAllData();
 
             running = false;
             JOptionPane.showMessageDialog(this, "GAME OVER!");
