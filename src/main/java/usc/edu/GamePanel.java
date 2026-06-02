@@ -127,7 +127,7 @@ public class GamePanel extends JPanel implements Runnable, MouseListener, MouseM
         return infScore[0];
     }
 
-    public GamePanel(int maxWave) {
+    public GamePanel(int maxWave, boolean cargarGuardado) {
         instance = this;
         this.maxWave = maxWave;
         startTime = System.currentTimeMillis();
@@ -158,7 +158,7 @@ public class GamePanel extends JPanel implements Runnable, MouseListener, MouseM
 
             e.printStackTrace();
         }
-        if (GameSave.existe()) {
+        if (cargarGuardado && GameSave.existe()) {
             GameSave.cargar(this);
         }
 
@@ -593,7 +593,7 @@ public class GamePanel extends JPanel implements Runnable, MouseListener, MouseM
 
             lives = 0;
             GameSave.borrar();
-            saveAllData();
+
             running = false;
             JOptionPane.showMessageDialog(this, "GAME OVER!");
 
