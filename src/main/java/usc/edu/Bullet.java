@@ -11,6 +11,7 @@ public class Bullet{
     private Image bulletImage;
     Enemy target;
     boolean active=true;
+    boolean explosive = false;
     double speed=7;
     int damage;
     int size;
@@ -44,7 +45,30 @@ public class Bullet{
 
     if(distance < 5){
 
-    target.takeDamage(damage);
+    target.takeDamage(damage, owner);
+
+    if(explosive){
+
+        for(Enemy enemy : GamePanel.instance.enemies){
+
+            if(enemy == target)
+                continue;
+
+            double dx2 = enemy.x - target.x;
+            double dy2 = enemy.y - target.y;
+
+            double dist =
+            Math.sqrt(dx2*dx2 + dy2*dy2);
+
+            if(dist < 120){
+
+                enemy.takeDamage(damage / 2, owner);
+            }
+        }
+
+        GamePanel.instance.shakeUntil =
+        System.currentTimeMillis() + 300;
+    }
 
     active = false;
     return;

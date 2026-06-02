@@ -8,14 +8,14 @@ public class TankEnemy extends Enemy {
         points = 25;
         armored = Math.random() < 0.30;
     }
-    @Override
-public void takeDamage(int damage){
+   @Override
+public void takeDamage(int damage, Tower tower) {
 
     if(armored){
         damage *= 0.6;
     }
 
-    super.takeDamage(damage);
+    super.takeDamage(damage, tower);
 }
 public boolean isArmored(){
     return armored;

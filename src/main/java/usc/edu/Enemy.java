@@ -1,6 +1,7 @@
 package usc.edu;
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
 
 public class Enemy {
 
@@ -13,9 +14,15 @@ public class Enemy {
     double speed;
     boolean alive = true;
     boolean finished = false;
+    boolean frozen = false;
+    boolean burning = false;
+    long burnUntil = 0;
+    long nextBurnTick = 0;
     BufferedImage sprite;
+    boolean burnSpreadUsed = false;
     int pathIndex = 0;
     int towerDamage;
+    Tower killerTower;
     int points = 10;
     int lastGridX = -1;
     int lastGridY = -1;
@@ -38,34 +45,97 @@ public class Enemy {
     if (!alive)
         return;
 
-    if (pathIndex >= GamePanel.pathPoints.size()) {
+    if (burning) {
 
-        finished = true; 
+        if (System.currentTimeMillis() >= nextBurnTick) {
+
+            takeDamage(8, null);
+
+          
+            if (!burnSpreadUsed && Math.random() < 0.10) {
+
+                ArrayList<Enemy> candidates = new ArrayList<>();
+
+                for (Enemy other : GamePanel.instance.enemies) {
+
+                    if (other == this)
+                        continue;
+
+                    if (!other.alive)
+                        continue;
+
+                    if (other.burning)
+                        continue;
+
+                    double dx = other.x - x;
+                    double dy = other.y - y;
+
+                    double dist = Math.sqrt(dx * dx + dy * dy);
+
+                    if (dist < 180) {
+                        candidates.add(other);
+                    }
+                }
+
+                if (!candidates.isEmpty()) {
+
+                    Enemy selected =
+                            candidates.get(
+                                    (int)(Math.random() * candidates.size())
+                            );
+
+                    selected.burning = true;
+
+                    selected.burnUntil =
+                            System.currentTimeMillis() + 10000;
+
+                    selected.nextBurnTick =
+                            System.currentTimeMillis();
+
+                    selected.burnSpreadUsed = true;
+
+                    burnSpreadUsed = true;
+                }
+            }
+
+            nextBurnTick = System.currentTimeMillis() + 1000;
+        }
+
+        if (System.currentTimeMillis() >= burnUntil) {
+            burning = false;
+        }
+    }
+
+    if (pathIndex >= GamePanel.pathPoints.size()) {
+        finished = true;
         return;
     }
 
     Point target = GamePanel.pathPoints.get(pathIndex);
+
     double targetX = target.x * 64;
     double targetY = target.y * 64;
+
     double dx = targetX - x;
     double dy = targetY - y;
+
     double distance = Math.sqrt(dx * dx + dy * dy);
 
     if (distance < 4) {
-
         pathIndex++;
         return;
     }
 
     dx /= distance;
     dy /= distance;
+
     x += dx * speed;
     y += dy * speed;
 
     damageTowers();
+
     animTime += 0.15;
 }
-
     public void damageTowers() {
 
         int enemyGridX = (int)((x + 24) / 64);
@@ -110,6 +180,11 @@ public class Enemy {
         return;
 
     int drawY = (int)y;
+    if(frozen){
+
+    g2.setColor(new Color(100,180,255,120));
+    g2.fillRect((int)x,(int)y,48,48);
+}
 
 if(this instanceof FastEnemy){
 
@@ -153,6 +228,14 @@ if(this instanceof TankEnemy tank && tank.isArmored()){
 }
 
 g2.drawImage(sprite,(int)x,drawY,48,48,null);
+if(burning){
+
+    g2.setColor(new Color(255,120,0,120));
+    g2.fillOval((int)x,drawY,48,48);
+
+    g2.setColor(new Color(255,50,0,180));
+    g2.drawOval((int)x,drawY,48,48);
+}
 
     if (slowed) {
 
@@ -167,7 +250,7 @@ g2.drawImage(sprite,(int)x,drawY,48,48,null);
 
     g2.fillRect((int)x, (int)y - 10, hpWidth, 5);
     }
-    public void takeDamage(int damage){
+    public void takeDamage(int damage, Tower attacker){
 
     hp -= damage;
 
@@ -175,6 +258,7 @@ g2.drawImage(sprite,(int)x,drawY,48,48,null);
 
         hp = 0;
         alive = false;
+        killerTower = attacker;
     }
 }
 }

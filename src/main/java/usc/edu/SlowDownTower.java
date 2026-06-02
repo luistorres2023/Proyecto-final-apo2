@@ -5,12 +5,13 @@ import java.util.ArrayList;
 public class SlowDownTower extends Tower{
 
     public SlowDownTower(int gridX,int gridY,BufferedImage sprite){
-    super(gridX,gridY,245,0,1200,sprite);
+    super(gridX,gridY,245,0,1200,sprite,60);
     bulletSprite="/assets/SlowDownbullet.png";
     bulletSize=30;
     this.hp = 150;
     this.maxHp = 150;
     scoreMultiplier = 1.2;
+    skillCost = 100;
 }
 
 @Override
@@ -63,4 +64,32 @@ public void update(ArrayList<Enemy> enemies,ArrayList<Bullet> bullets){
     lastShot=currentTime;
         }
     }
+    @Override
+public String getSkillName(){
+    return "Congelar";
+}
+
+@Override
+public void useSkill(ArrayList<Enemy> enemies){
+
+    for(Enemy enemy : enemies){
+
+        enemy.speed = 0;
+        enemy.frozen = true;
+    }
+
+    new Thread(() -> {
+
+        try{
+            Thread.sleep(3000);
+        }catch(Exception e){}
+
+        for(Enemy enemy : enemies){
+
+            enemy.speed = enemy.baseSpeed;
+            enemy.frozen = false;
+        }
+
+    }).start();
+}
 }

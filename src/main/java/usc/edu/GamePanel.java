@@ -75,7 +75,7 @@ public class GamePanel extends JPanel implements Runnable, MouseListener, MouseM
     ArrayList<Enemy> enemiesToRemove = new ArrayList<>();
     public static ArrayList<Bullet> bulletsToAdd = new ArrayList<>();
 
-    int money = 200;
+    int money =300;
     double lives = 10;
     int maxWave = -1;
     int wave = 1;
@@ -96,6 +96,7 @@ public class GamePanel extends JPanel implements Runnable, MouseListener, MouseM
     int elapsedSeconds = 0;
     long pausedAccumulatedTime = 0;
     long pauseStartTime = 0;
+    long shakeUntil = 0;
     double currentMultiplier = 1.0;
 
     long lastSpawn = 0;
@@ -104,6 +105,9 @@ public class GamePanel extends JPanel implements Runnable, MouseListener, MouseM
     int enemiesSpawned = 0;
     int enemiesPerWave = 7;
     int selectedTower = 1;
+    boolean skillMode = false;
+    Tower selectedPlacedTower = null;
+    boolean showSkillMenu = false;
     int mouseGridX;
     int mouseGridY;
 
@@ -526,7 +530,13 @@ public class GamePanel extends JPanel implements Runnable, MouseListener, MouseM
         money += 5;
     }
 
-    score += enemy.points * wave;
+    double mult = 1.0;
+
+if(enemy.killerTower != null){
+    mult = enemy.killerTower.getScoreMultiplier();
+}
+
+score += (int)(enemy.points * wave * mult);
 
     enemiesToRemove.add(enemy);
 }
@@ -677,6 +687,13 @@ public class GamePanel extends JPanel implements Runnable, MouseListener, MouseM
         super.paintComponent(g);
 
         Graphics2D g2 = (Graphics2D) g;
+        if(System.currentTimeMillis() < shakeUntil){
+
+    g2.translate(
+        (int)(Math.random()*8)-4,
+        (int)(Math.random()*8)-4
+    );
+}
 
         drawMap(g2);
 
@@ -719,15 +736,7 @@ public class GamePanel extends JPanel implements Runnable, MouseListener, MouseM
     public void drawUI(Graphics2D g2) {
 
         g2.setColor(new Color(40, 40, 40, 220));
-
-        g2.fillRoundRect(
-                WIDTH - 350,
-                20,
-                310,
-                130,
-                20,
-                20);
-
+        g2.fillRoundRect(WIDTH - 350,20,310,130,20,20);
         g2.setFont(new Font("Arial", Font.BOLD, 22));
         g2.setColor(Color.WHITE);
         g2.drawImage(moneyIcon, WIDTH - 335, 25, 32, 32, null);
@@ -779,6 +788,47 @@ public class GamePanel extends JPanel implements Runnable, MouseListener, MouseM
         g2.drawString("$60", 330, HEIGHT - 10);
         g2.drawString("$75", 450, HEIGHT - 10);
         g2.drawString("$100", 565, HEIGHT - 10);
+        if(skillMode){
+        g2.setColor(Color.ORANGE);
+        g2.drawString("MODO HABILIDAD (5)",720,HEIGHT - 40);
+}
+if(showSkillMenu && selectedPlacedTower != null){
+
+    int menuX = selectedPlacedTower.x + 70;
+    int menuY = selectedPlacedTower.y -40;
+
+    g2.setColor(new Color(30,30,30,230));
+    g2.fillRoundRect(menuX,menuY,220,130,15,15);
+
+    g2.setColor(Color.WHITE);
+    g2.drawRoundRect(menuX,menuY,220,130,15,15);
+
+    g2.drawString("Vida: " + selectedPlacedTower.hp + "/" + selectedPlacedTower.maxHp,menuX + 10,menuY + 25);
+    g2.drawString("Precio: $" + selectedPlacedTower.skillCost,menuX + 10,menuY + 50);
+    g2.drawString("Skill: " + selectedPlacedTower.getSkillName(),menuX + 10,menuY + 75);
+
+    if(selectedPlacedTower.canUseSkill()){
+
+        g2.setColor(Color.GREEN);
+        g2.fillRect(menuX + 10,menuY + 90,90,25);
+
+        g2.setColor(Color.BLACK);
+        g2.drawString("ACTIVAR",menuX + 20,menuY + 108);
+
+    }else{
+
+        long restante =
+        (selectedPlacedTower.skillCooldown -
+        (System.currentTimeMillis() - selectedPlacedTower.lastSkillUse))/1000;
+
+        g2.setColor(Color.RED);
+        g2.fillRect(menuX + 10,menuY + 90,90,25);
+
+        g2.setColor(Color.WHITE);
+        g2.drawString(restante + "s",menuX + 35,menuY + 108);
+    }
+}
+
     }
 
     public void drawBuildPreview(Graphics2D g2) {
@@ -915,7 +965,7 @@ public class GamePanel extends JPanel implements Runnable, MouseListener, MouseM
         createMap();
         createPath();
 
-        money = 200;
+        money = 300;
         lives = 10;
         wave = 1;
         enemiesSpawned = 0;
@@ -1025,7 +1075,62 @@ public class GamePanel extends JPanel implements Runnable, MouseListener, MouseM
         }
 
         int mouseX = e.getX();
-        int mouseY = e.getY();
+        int mouseY = e.getY(); 
+        if(skillMode){
+            if(showSkillMenu && selectedPlacedTower != null){
+
+    int menuX = selectedPlacedTower.x + 70;
+    int menuY = selectedPlacedTower.y -40;
+
+    Rectangle skillButton =
+    new Rectangle(menuX + 10,menuY + 90,90,25);
+
+    if(skillButton.contains(e.getPoint())){
+
+    int skillCost = selectedPlacedTower.skillCost;
+
+    if(selectedPlacedTower.canUseSkill()){
+
+        if(money >= skillCost){
+            money -= skillCost;
+
+            selectedPlacedTower.useSkill(enemies);
+            selectedPlacedTower.lastSkillUse =
+            System.currentTimeMillis();
+
+        }else{
+
+            JOptionPane.showMessageDialog(this,"Necesitas $" + skillCost +" para usar la habilidad.");
+        }
+    }
+
+    return;
+}
+}
+
+    for(Tower tower : towers){
+
+
+        Rectangle r = new Rectangle(tower.gridX * TILE_SIZE,tower.gridY * TILE_SIZE,TILE_SIZE,TILE_SIZE);
+         if(r.contains(e.getPoint())){
+
+        if(selectedPlacedTower == tower && showSkillMenu){
+
+            showSkillMenu = false;
+            selectedPlacedTower = null;
+
+        }else{
+
+            selectedPlacedTower = tower;
+            showSkillMenu = true;
+        }
+
+        return;
+        }
+    }
+
+    return;
+}
 
         if (mouseX >= 200 && mouseX <= 264 &&
                 mouseY >= HEIGHT - 90 && mouseY <= HEIGHT - 26) {
@@ -1093,6 +1198,13 @@ public class GamePanel extends JPanel implements Runnable, MouseListener, MouseM
         if (e.getKeyCode() == KeyEvent.VK_4) {
             selectedTower = 4;
         }
+        if(e.getKeyCode() == KeyEvent.VK_5){
+
+    skillMode = !skillMode;
+
+    showSkillMenu = false;
+    selectedPlacedTower = null;
+}
         if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
 
             if (!paused) {

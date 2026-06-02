@@ -14,14 +14,14 @@ public class FastEnemy extends Enemy {
     }
 
     @Override
-    public void takeDamage(int damage) {
+public void takeDamage(int damage, Tower tower) {
 
         if(Math.random() < 0.20) {
             dodgeTextUntil = System.currentTimeMillis() + 300;
             return;
         }
 
-        super.takeDamage(damage);
+        super.takeDamage(damage, tower);
     }
 
     @Override

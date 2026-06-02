@@ -16,6 +16,7 @@ public class Tower {
     long fireRate;
     long lastShot = 0;
     BufferedImage sprite;
+    int cost;
     int hp;
     int maxHp;
     boolean alive = true;
@@ -23,20 +24,27 @@ public class Tower {
     double scoreMultiplier = 1.0;
     double shootAnim = 0;
     long slowUntil = 0;
+    public int skillCost;
+    long lastSkillUse = 0;
+    long skillCooldown = 20000;
+    boolean rapidFire = false;
+    long rapidFireUntil = 0;
 
-    public Tower(int gridX,int gridY,int range,int damage,long fireRate,BufferedImage sprite) {
+    public Tower(int gridX,int gridY,int range,int damage,long fireRate,BufferedImage sprite,int cost) {
 
-        this.gridX = gridX;
-        this.gridY = gridY;
-        x = gridX * 64;
-        y = gridY * 64;
-        this.range = range;
-        this.damage = damage;
-        this.fireRate = fireRate;
-        this.sprite = sprite;
-        this.hp = 100;
-        this.maxHp = 100;
-    }
+    this.gridX = gridX;
+    this.gridY = gridY;
+    x = gridX * 64;
+    y = gridY * 64;
+    this.range = range;
+    this.damage = damage;
+    this.fireRate = fireRate;
+    this.sprite = sprite;
+    this.cost = cost;
+
+    hp = 100;
+    maxHp = 100;
+}
 
     public void update(ArrayList<Enemy> enemies,ArrayList<Bullet> bullets) {
 
@@ -45,8 +53,17 @@ public class Tower {
     shootAnim -= 0.5;
 
         long currentTime =System.currentTimeMillis();
-
         long currentFireRate = fireRate;
+
+if(rapidFire){
+    currentFireRate /= 3;
+}
+if(rapidFire &&
+   System.currentTimeMillis() > rapidFireUntil){
+
+    rapidFire = false;
+}
+
 
 if(System.currentTimeMillis() < slowUntil){
 
@@ -80,8 +97,18 @@ if(currentTime - lastShot < currentFireRate)
 
         if (target != null) {
 
-            GamePanel.bulletsToAdd.add(new Bullet(x,y,target,damage,bulletSprite,bulletSize,this));
-        
+           Bullet bullet =new Bullet(x,y,target,damage,bulletSprite,bulletSize,this);
+
+if(this instanceof SniperTower sniper &&
+   sniper.megaShots > 0){
+
+    bullet.damage *= 4;
+    bullet.explosive = true;
+
+    sniper.megaShots--;
+}
+
+GamePanel.bulletsToAdd.add(bullet);
             shootAnim = 8;
             lastShot = currentTime;
         }
@@ -115,6 +142,19 @@ public double getScoreMultiplier() {
 
 public void setScoreMultiplier(double scoreMultiplier) {
     this.scoreMultiplier = scoreMultiplier;
+}
+public boolean canUseSkill(){
+
+    return System.currentTimeMillis() - lastSkillUse >= skillCooldown;
+}
+
+public String getSkillName(){
+
+    return "Arrow rain";
+}
+
+public void useSkill(ArrayList<Enemy> enemies){
+
 }
 
 }
