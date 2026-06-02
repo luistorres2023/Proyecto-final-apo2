@@ -31,7 +31,7 @@ public class GamePanel extends JPanel implements Runnable, MouseListener, MouseM
 
     final int WIDTH = 1600;
     final int HEIGHT = 900;
-    final int TILE_SIZE = 64;
+    public final int TILE_SIZE = 64;
     final int ROWS = HEIGHT / TILE_SIZE;
     final int COLS = WIDTH / TILE_SIZE;
     public static GamePanel instance;

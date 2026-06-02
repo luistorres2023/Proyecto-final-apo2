@@ -120,7 +120,7 @@ public class WaveMenu extends JFrame {
                 Main.soundManager.stopMusic();
                 int maxWave = GameSave.getMaxWaveGuardado();
                 JFrame gameFrame = new JFrame("Tower Defense");
-                GamePanel game = new GamePanel(maxWave, false);
+                GamePanel game = new GamePanel(maxWave, true);
                 gameFrame.setContentPane(game);
                 gameFrame.pack();
                 gameFrame.setLocationRelativeTo(null);
