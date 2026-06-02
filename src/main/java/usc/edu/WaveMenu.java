@@ -107,13 +107,15 @@ public class WaveMenu extends JFrame {
             Main.frame.setVisible(true);
         });
         if (GameSave.existe()) {
-            JButton continuar = createButton("CONTINUAR");
+            JButton continuar = new JButton("CONTINUAR");
             continuar.setFont(MedievalFont.getFont(20f));
             continuar.setForeground(Color.WHITE);
             continuar.setOpaque(true);
             continuar.setContentAreaFilled(true);
-            continuar.setBackground(new Color(120, 80, 20));
-            
+            continuar.setBackground(new Color(60, 60, 60));
+            continuar.setBorderPainted(false);
+            continuar.setFocusPainted(false);
+            continuar.setBounds(305, 510, 160, 48); 
 
             continuar.addActionListener(e -> {
                 Main.soundManager.stopMusic();
@@ -127,9 +129,8 @@ public class WaveMenu extends JFrame {
                 dispose();
             });
 
-            buttons.add(Box.createVerticalStrut(24));
-            buttons.add(continuar);
-
+            panel.add(continuar);
+        
         }
         buttons.add(Box.createVerticalStrut(10));
         buttons.add(back);
