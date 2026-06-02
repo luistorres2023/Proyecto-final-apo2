@@ -42,9 +42,11 @@ public class Bullet{
     double dy=target.y-y;
     double distance=Math.sqrt(dx*dx+dy*dy);
 
-    if(distance<5){
+    if(distance < 5){
 
-    active=false;
+    target.takeDamage(damage);
+
+    active = false;
     return;
 }
 

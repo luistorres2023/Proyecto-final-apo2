@@ -59,7 +59,6 @@ public class Enemy {
 
     dx /= distance;
     dy /= distance;
-
     x += dx * speed;
     y += dy * speed;
 
@@ -145,22 +144,15 @@ if(this instanceof NIGROMANTE){
 
     g2.setColor(new Color(0,180,0,90));
 
-    g2.fillOval(
-        (int)x - 4,
-        drawY - 4,
-        auraSize,
-        auraSize
-    );
+    g2.fillOval((int)x - 4,drawY - 4,auraSize,auraSize);
+}
+if(this instanceof TankEnemy tank && tank.isArmored()){
+
+    g2.setColor(Color.GRAY);
+    g2.drawOval((int)x - 3,drawY - 3,54,54);
 }
 
-g2.drawImage(
-    sprite,
-    (int)x,
-    drawY,
-    48,
-    48,
-    null
-);
+g2.drawImage(sprite,(int)x,drawY,48,48,null);
 
     if (slowed) {
 
@@ -175,4 +167,14 @@ g2.drawImage(
 
     g2.fillRect((int)x, (int)y - 10, hpWidth, 5);
     }
+    public void takeDamage(int damage){
+
+    hp -= damage;
+
+    if(hp <= 0){
+
+        hp = 0;
+        alive = false;
+    }
+}
 }

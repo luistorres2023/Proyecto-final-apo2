@@ -508,50 +508,29 @@ public class GamePanel extends JPanel implements Runnable, MouseListener, MouseM
 
             bullet.update();
         }
+        for(Enemy enemy : new ArrayList<>(enemies)){
 
-        for (Bullet bullet : new ArrayList<>(bullets)) {
+    if(enemy.alive)
+        continue;
 
-            if (!bullet.active)
-                continue;
+    if(enemy instanceof TankEnemy){
+        money += 15;
+    }
+    else if(enemy instanceof Witch){
+        money += 30;
+    }
+    else if(enemy instanceof NIGROMANTE){
+        money += 250;
+    }
+    else{
+        money += 5;
+    }
 
-            for (Enemy enemy : new ArrayList<>(enemies)) {
+    score += enemy.points * wave;
 
-                if (!enemy.alive)
-                    continue;
+    enemiesToRemove.add(enemy);
+}
 
-                double dx = bullet.x - enemy.x;
-                double dy = bullet.y - enemy.y;
-                double distance = Math.sqrt(dx * dx + dy * dy);
-                if (distance < 20) {
-
-                    enemy.hp -= bullet.damage;
-
-                    bullet.active = false;
-
-                    if (enemy.hp <= 0) {
-
-                enemy.alive = false;
-
-                        if (enemy instanceof TankEnemy) {
-                            money += 15;
-                        } else if (enemy instanceof Witch) {
-                            money += 30;
-                        } else if (enemy instanceof NIGROMANTE) {
-                            money += 250;
-                        } else {
-                            money += 5;
-                        }
-
-                        currentMultiplier = bullet.owner.scoreMultiplier;
-
-                        int waveBonus = wave;
-
-                        score += (int) (enemy.points * currentMultiplier * waveBonus);
-
-                    }
-                }
-            }
-        }
 
         enemies.addAll(enemiesToAdd);
         enemies.removeAll(enemiesToRemove);

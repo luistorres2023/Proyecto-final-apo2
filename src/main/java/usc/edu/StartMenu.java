@@ -23,14 +23,10 @@ public StartMenu(){
     addMouseListener(this);
 
     music.playMusic("/assets/music/magodeoz.wav");
-
     try {
 
     backgroundImage = ImageIO.read(
-        getClass().getResourceAsStream(
-            "/assets/menu_background.png"
-        )
-    );
+        getClass().getResourceAsStream( "/assets/menu_background.png"));
 
 } catch(Exception e) {
 
@@ -46,14 +42,7 @@ protected void paintComponent(Graphics g){
 
     if(backgroundImage != null){
 
-    g2d.drawImage(
-        backgroundImage,
-        0,
-        0,
-        960,
-        720,
-        null
-    );
+    g2d.drawImage(backgroundImage,0,0,960,720,null);
 
 }
 

@@ -22,6 +22,7 @@ public class Tower {
     double animTime = Math.random() * 10;
     double scoreMultiplier = 1.0;
     double shootAnim = 0;
+    long slowUntil = 0;
 
     public Tower(int gridX,int gridY,int range,int damage,long fireRate,BufferedImage sprite) {
 
@@ -45,8 +46,15 @@ public class Tower {
 
         long currentTime =System.currentTimeMillis();
 
-        if (currentTime - lastShot < fireRate)
-            return;
+        long currentFireRate = fireRate;
+
+if(System.currentTimeMillis() < slowUntil){
+
+    currentFireRate *= 2;
+}
+
+if(currentTime - lastShot < currentFireRate)
+    return;;
 
         Enemy target = null;
 
@@ -83,20 +91,18 @@ public class Tower {
    public void draw(Graphics2D g2) {
     if(!alive)
         return;
-    int size = 64
-         + (int)(Math.sin(animTime) * 5)
-        + (int)shootAnim;
+    int size = 64 + (int)(Math.sin(animTime) * 5) + (int)shootAnim;
 
 int offset = (64 - size) / 2;
 
-g2.drawImage(
-    sprite,
-    x + offset,
-    y + offset,
-    size,
-    size,
-    null
-);
+g2.drawImage(sprite,x + offset,y + offset,size,size,null);
+if(System.currentTimeMillis() < slowUntil){
+
+    g2.setColor(new Color(180,0,255,60));
+    g2.fillOval(x - 15,y - 15,94,94);
+    g2.setColor(new Color(220,100,255,180));
+    g2.drawOval(x - 15,y - 15,94,94);
+}
     g2.setColor(Color.RED);
     g2.fillRect(x + 12,y - 10,40,5);
     g2.setColor(Color.GREEN);
