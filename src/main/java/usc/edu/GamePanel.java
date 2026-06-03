@@ -22,7 +22,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 
-
 public class GamePanel extends JPanel implements Runnable, MouseListener, MouseMotionListener, KeyListener {
 
     private BufferedImage mapImage;
@@ -74,7 +73,7 @@ public class GamePanel extends JPanel implements Runnable, MouseListener, MouseM
     ArrayList<Enemy> enemiesToRemove = new ArrayList<>();
     public static ArrayList<Bullet> bulletsToAdd = new ArrayList<>();
 
-    int money =300;
+    int money =400;
     double lives = 10;
     int maxWave = -1;
     int wave = 1;
@@ -100,6 +99,8 @@ public class GamePanel extends JPanel implements Runnable, MouseListener, MouseM
     long darknessUntil = 0;
     NIGROMANTE currentNigromante = null;
     double currentMultiplier = 1.0;
+    int nigromanteSpawnCount = 0;
+    int nigromanteExtraHP = 0;
 
     long lastSpawn = 0;
     long pausedTime = 0;
@@ -566,27 +567,31 @@ public class GamePanel extends JPanel implements Runnable, MouseListener, MouseM
     if(enemy.alive)
         continue;
     if(enemy instanceof NIGROMANTE){
-    
+
 
     nigromanteAlive = false;
     currentNigromante = null;
 
+
     necroMusic.stop();
-music.playMusic("/assets/music/background.wav");
+    music.playMusic("/assets/music/background.wav");
 
-    enemiesToAdd.add(
-        new TankEnemy(enemy.x, enemy.y, tankEnemyImg));
 
-    enemiesToAdd.add(
-        new TankEnemy(enemy.x, enemy.y, tankEnemyImg));
 
-    enemiesToAdd.add(
-        new Witch(enemy.x, enemy.y, witchImg));
+    for(Enemy e : enemies){
 
-    enemiesToAdd.add(
-        new Witch(enemy.x, enemy.y, witchImg));
+        if(e != enemy){
+
+            e.alive = false;
+        }
+    }
+
+
+    // termina la wave
+    enemiesSpawned = enemiesPerWave;
+
+
 }
-
     if(enemy instanceof TankEnemy){
         money += 15;
     }
@@ -616,6 +621,11 @@ score += (int)(enemy.points * wave * mult);
         enemies.removeAll(enemiesToRemove);
         enemiesToAdd.clear();
         enemiesToRemove.clear();
+        if(!nigromanteAlive && enemies.isEmpty()){
+
+    enemiesSpawned = enemiesPerWave;
+
+}
         enemies.removeIf(enemy -> !enemy.alive);
         towers.removeIf(tower -> !tower.alive);
         bullets.removeIf(bullet -> !bullet.active);
@@ -739,7 +749,22 @@ score += (int)(enemy.points * wave * mult);
                 enemiesToAdd.add(new Witch(0, 4 * TILE_SIZE, witchImg));
             } if (spawnNigromante) {
 
-    NIGROMANTE nuevoNigromante =new NIGROMANTE(0, 4 * TILE_SIZE, NIGROMANTEImg);
+
+    nigromanteSpawnCount++;
+
+
+    if(nigromanteSpawnCount > 1){
+
+        nigromanteExtraHP += 1500;
+    }
+
+
+    NIGROMANTE nuevoNigromante =
+    new NIGROMANTE(0, 4 * TILE_SIZE, NIGROMANTEImg);
+
+
+    nuevoNigromante.hp += nigromanteExtraHP;
+    nuevoNigromante.maxHp += nigromanteExtraHP;
 
     enemiesToAdd.add(nuevoNigromante);
     for(Tower tower : towers){
@@ -1068,7 +1093,7 @@ if(showSkillMenu && selectedPlacedTower != null){
         createMap();
         createPath();
 
-        money = 300;
+        money = 400;
         lives = 10;
         wave = 1;
         enemiesSpawned = 0;

@@ -3,12 +3,12 @@ import java.awt.image.BufferedImage;
 
 public class NIGROMANTE extends Enemy {
     long lastSummon = 0;
-    long summonCooldown = 8000;
+    long summonCooldown = 10000;
     boolean firstSpawnEffect = false;
     public int auraRange = 300;
 
     public NIGROMANTE(double x, double y, BufferedImage sprite) {
-        super(x, y, 4000, 0.6,100,sprite);
+        super(x, y, 4000, 0.5,100,sprite);
         points = 1500;
         auraRange =300;
     }
@@ -26,8 +26,7 @@ public void update() {
 
     for(Tower tower : GamePanel.instance.towers){
 
-        tower.slowUntil =
-            System.currentTimeMillis() + 5000;
+        tower.slowUntil =System.currentTimeMillis() + 5000;
     }
 }
 
@@ -35,11 +34,8 @@ public void update() {
 
         lastSummon = System.currentTimeMillis();
 
-        TankEnemy tank =
-            new TankEnemy(x + 40, y, GamePanel.instance.tankEnemyImg);
-
-        Witch witch =
-            new Witch(x - 40, y, GamePanel.instance.witchImg);
+        TankEnemy tank =new TankEnemy(x + 40, y, GamePanel.instance.tankEnemyImg);
+        Witch witch =new Witch(x - 40, y, GamePanel.instance.witchImg);
 
         tank.pathIndex = this.pathIndex;
         witch.pathIndex = this.pathIndex;
