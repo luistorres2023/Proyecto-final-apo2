@@ -21,8 +21,7 @@ import javax.imageio.ImageIO;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
-import usc.edu.WaveMenu;
-import usc.edu.StartMenu;
+
 
 public class GamePanel extends JPanel implements Runnable, MouseListener, MouseMotionListener, KeyListener {
 
@@ -60,6 +59,7 @@ public class GamePanel extends JPanel implements Runnable, MouseListener, MouseM
     public BufferedImage witchImg;
     public BufferedImage bulletImg;
     public BufferedImage NIGROMANTEImg;
+    private NecroMusicManager necroMusic;
 
     Thread gameThread;
 
@@ -77,7 +77,7 @@ public class GamePanel extends JPanel implements Runnable, MouseListener, MouseM
     int money =300;
     double lives = 10;
     int maxWave = -1;
-    int wave = 1;
+    int wave = 4;
     int score = 0;
     int record10 = 0;
     int record20 = 0;
@@ -137,10 +137,10 @@ public class GamePanel extends JPanel implements Runnable, MouseListener, MouseM
         instance = this;
         this.maxWave = maxWave;
         startTime = System.currentTimeMillis();
-        loadRecord();
+       necroMusic = new NecroMusicManager();
+        necroMusic.load();
         loadInfiniteRecord();
         music.playMusic("/assets/music/background.wav");
-        music.loadNecroMusic();
         setPreferredSize(new Dimension(WIDTH, HEIGHT));
 
         addMouseListener(this);
@@ -571,8 +571,8 @@ public class GamePanel extends JPanel implements Runnable, MouseListener, MouseM
     nigromanteAlive = false;
     currentNigromante = null;
 
-    music.stopMusic();
-    music.playMusic("/assets/music/background.wav");
+    necroMusic.stop();
+music.playMusic("/assets/music/background.wav");
 
     enemiesToAdd.add(
         new TankEnemy(enemy.x, enemy.y, tankEnemyImg));
@@ -639,6 +639,7 @@ score += (int)(enemy.points * wave * mult);
                 JOptionPane.showMessageDialog(this, "VICTORY!");
 
                 music.stopMusic();
+                necroMusic.stop();
                 new WaveMenu();
                 music.playMusic("/assets/music/magodeoz.wav");
                 return;
@@ -657,6 +658,7 @@ score += (int)(enemy.points * wave * mult);
             running = false;
             JOptionPane.showMessageDialog(this, "GAME OVER!");
 
+            necroMusic.stop();
             music.stopMusic();
             new WaveMenu();
 
@@ -758,8 +760,7 @@ score += (int)(enemy.points * wave * mult);
             System.currentTimeMillis() + 10000;
     }
 
-    music.playNecroMusicInstant();
-    music.playNecroMusicInstant();
+    necroMusic.play();
 } else if (wave % 3 == 0) {
                 enemiesToAdd.add(new TankEnemy(0, 4 * TILE_SIZE, tankEnemyImg));
             } else {
@@ -1157,6 +1158,7 @@ if(showSkillMenu && selectedPlacedTower != null){
 
             if (restartButton.contains(p)) {
                 saveAllData();
+                necroMusic.stop();
 
                 resetGame();
             }
@@ -1166,6 +1168,7 @@ if(showSkillMenu && selectedPlacedTower != null){
                 saveAllData();
                 running = false;
                 music.stopMusic();
+                necroMusic.stop();
                 new WaveMenu();
                 music.playMusic("/assets/music/magodeoz.wav");
                 javax.swing.SwingUtilities.getWindowAncestor(this).dispose();

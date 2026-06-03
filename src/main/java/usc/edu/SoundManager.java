@@ -7,8 +7,7 @@ import java.net.URL;
 public class SoundManager {
 
     private static Clip clip;
-    private Clip returnByDeathClip;
-
+   
     public void playMusic(String path) {
 
         try {
@@ -44,46 +43,7 @@ public class SoundManager {
             e.printStackTrace();
         }
     }
-    public void playNecroMusicInstant() {
 
-    stopMusicInstant();
-
-    System.out.println("returnByDeathClip = " + returnByDeathClip);
-
-    if(returnByDeathClip != null){
-
-        System.out.println("isOpen = " + returnByDeathClip.isOpen());
-
-        clip = returnByDeathClip;
-
-        clip.setFramePosition(0);
-        clip.loop(Clip.LOOP_CONTINUOUSLY);
-        clip.start();
-    }
-}
-public void loadNecroMusic() {
-
-    try {
-
-        URL url =
-            getClass().getResource("/assets/music/returnbydeath.wav");
-
-        System.out.println("URL NECRO = " + url);
-
-        AudioInputStream audio =
-            AudioSystem.getAudioInputStream(url);
-
-        returnByDeathClip = AudioSystem.getClip();
-        returnByDeathClip.open(audio);
-
-        System.out.println("NECRO MUSIC CARGADA");
-
-    } catch (Exception e) {
-
-        System.out.println("ERROR CARGANDO NECRO MUSIC");
-        e.printStackTrace();
-    }
-}
     public void playMusicInstant(String path) {
 
     try {

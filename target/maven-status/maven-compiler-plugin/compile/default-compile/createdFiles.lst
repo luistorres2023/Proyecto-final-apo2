@@ -15,6 +15,7 @@ usc\edu\Bullet.class
 usc\edu\Historia$1.class
 usc\edu\SniperTower.class
 usc\edu\MainMenu.class
+usc\edu\NecroMusicManager.class
 usc\edu\FastEnemy.class
 usc\edu\TankEnemy.class
 usc\edu\GameSave$EnemigoGuardado.class
