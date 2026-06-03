@@ -141,6 +141,7 @@ public class GamePanel extends JPanel implements Runnable, MouseListener, MouseM
        necroMusic = new NecroMusicManager();
         necroMusic.load();
         loadInfiniteRecord();
+        loadRecord();
         music.playMusic("/assets/music/background.wav");
         setPreferredSize(new Dimension(WIDTH, HEIGHT));
 
