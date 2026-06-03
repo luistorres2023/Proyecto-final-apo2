@@ -77,7 +77,7 @@ public class GamePanel extends JPanel implements Runnable, MouseListener, MouseM
     int money =300;
     double lives = 10;
     int maxWave = -1;
-    int wave = 4;
+    int wave = 1;
     int score = 0;
     int record10 = 0;
     int record20 = 0;
