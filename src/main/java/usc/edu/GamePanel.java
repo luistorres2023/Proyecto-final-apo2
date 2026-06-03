@@ -21,7 +21,6 @@ import javax.imageio.ImageIO;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
-import usc.edu.Main;
 import usc.edu.WaveMenu;
 import usc.edu.StartMenu;
 
@@ -97,6 +96,9 @@ public class GamePanel extends JPanel implements Runnable, MouseListener, MouseM
     long pausedAccumulatedTime = 0;
     long pauseStartTime = 0;
     long shakeUntil = 0;
+    boolean nigromanteAlive = false;
+    long darknessUntil = 0;
+    NIGROMANTE currentNigromante = null;
     double currentMultiplier = 1.0;
 
     long lastSpawn = 0;
@@ -138,7 +140,7 @@ public class GamePanel extends JPanel implements Runnable, MouseListener, MouseM
         loadRecord();
         loadInfiniteRecord();
         music.playMusic("/assets/music/background.wav");
-
+        music.loadNecroMusic();
         setPreferredSize(new Dimension(WIDTH, HEIGHT));
 
         addMouseListener(this);
@@ -179,7 +181,6 @@ public class GamePanel extends JPanel implements Runnable, MouseListener, MouseM
                 return;
             }
         }
-
         int pos = -1;
 
         for (int i = 0; i < 4; i++) {
@@ -478,6 +479,25 @@ public class GamePanel extends JPanel implements Runnable, MouseListener, MouseM
             long now = System.currentTimeMillis();
             elapsedSeconds = (int) ((now - startTime - pausedAccumulatedTime) / 1000);
         }
+        for(Enemy enemy : enemies){
+
+    if(enemy instanceof NIGROMANTE necro){
+
+        for(Tower tower : towers){
+
+            double dx = (tower.x + 32) - (enemy.x + 24);
+            double dy = (tower.y + 32) - (enemy.y + 24);
+
+            double dist = Math.sqrt(dx * dx + dy * dy);
+
+            if(dist < necro.auraRange){
+
+                tower.slowUntil =
+                    System.currentTimeMillis() + 5000;
+            }
+        }
+    }
+}
 
         for (Enemy enemy : new ArrayList<>(enemies)) {
 
@@ -502,6 +522,34 @@ public class GamePanel extends JPanel implements Runnable, MouseListener, MouseM
 
             }
         }
+        for(Enemy e : enemies){
+    e.speedMultiplier = 1.0;
+}
+        for (Enemy e : enemies) {
+
+    if (!(e instanceof NIGROMANTE))
+        continue;
+    if(!e.alive)
+        continue;
+
+    NIGROMANTE n = (NIGROMANTE)e;
+
+    for (Enemy other : enemies) {
+
+        if (other == n)
+            continue;
+
+        double dx = other.x - n.x;
+        double dy = other.y - n.y;
+
+        double dist = Math.sqrt(dx * dx + dy * dy);
+
+        if (dist <= n.auraRange) {
+
+            other.speedMultiplier = 1.5;
+        }
+    }
+}
 
         for (Tower tower : new ArrayList<>(towers)) {
 
@@ -514,8 +562,30 @@ public class GamePanel extends JPanel implements Runnable, MouseListener, MouseM
         }
         for(Enemy enemy : new ArrayList<>(enemies)){
 
+
     if(enemy.alive)
         continue;
+    if(enemy instanceof NIGROMANTE){
+    
+
+    nigromanteAlive = false;
+    currentNigromante = null;
+
+    music.stopMusic();
+    music.playMusic("/assets/music/background.wav");
+
+    enemiesToAdd.add(
+        new TankEnemy(enemy.x, enemy.y, tankEnemyImg));
+
+    enemiesToAdd.add(
+        new TankEnemy(enemy.x, enemy.y, tankEnemyImg));
+
+    enemiesToAdd.add(
+        new Witch(enemy.x, enemy.y, witchImg));
+
+    enemiesToAdd.add(
+        new Witch(enemy.x, enemy.y, witchImg));
+}
 
     if(enemy instanceof TankEnemy){
         money += 15;
@@ -569,8 +639,8 @@ score += (int)(enemy.points * wave * mult);
                 JOptionPane.showMessageDialog(this, "VICTORY!");
 
                 music.stopMusic();
-                new MainMenu();
-                javax.swing.SwingUtilities.getWindowAncestor(this).dispose();
+                new WaveMenu();
+                music.playMusic("/assets/music/magodeoz.wav");
                 return;
             }
 
@@ -665,9 +735,32 @@ score += (int)(enemy.points * wave * mult);
 
             if (spawnWitch) {
                 enemiesToAdd.add(new Witch(0, 4 * TILE_SIZE, witchImg));
-            } else if (spawnNigromante) {
-                enemiesToAdd.add(new NIGROMANTE(0, 4 * TILE_SIZE, NIGROMANTEImg));
-            } else if (wave % 3 == 0) {
+            } if (spawnNigromante) {
+
+    NIGROMANTE nuevoNigromante =new NIGROMANTE(0, 4 * TILE_SIZE, NIGROMANTEImg);
+
+    enemiesToAdd.add(nuevoNigromante);
+    for(Tower tower : towers){
+
+    tower.necroCurseUntil =System.currentTimeMillis() + 5000;
+}
+
+    currentNigromante = nuevoNigromante;
+    nigromanteAlive = true;
+
+    shakeUntil = System.currentTimeMillis() + 7000;
+
+    darknessUntil = Long.MAX_VALUE;
+
+    for(Tower tower : towers){
+
+        tower.cursedUntil =
+            System.currentTimeMillis() + 10000;
+    }
+
+    music.playNecroMusicInstant();
+    music.playNecroMusicInstant();
+} else if (wave % 3 == 0) {
                 enemiesToAdd.add(new TankEnemy(0, 4 * TILE_SIZE, tankEnemyImg));
             } else {
                 if (Math.random() < 0.5)
@@ -689,13 +782,15 @@ score += (int)(enemy.points * wave * mult);
         Graphics2D g2 = (Graphics2D) g;
         if(System.currentTimeMillis() < shakeUntil){
 
-    g2.translate(
-        (int)(Math.random()*8)-4,
-        (int)(Math.random()*8)-4
-    );
+    g2.translate((int)(Math.random()*8)-4,(int)(Math.random()*8)-4);
 }
 
         drawMap(g2);
+        if(nigromanteAlive){
+
+    g2.setColor(new Color(0,0,0,150));
+    g2.fillRect(0,0,WIDTH,HEIGHT);
+}
 
         drawBuildPreview(g2);
 
@@ -704,6 +799,13 @@ score += (int)(enemy.points * wave * mult);
         }
 
         for (Enemy enemy : new ArrayList<>(enemies)) {
+            if(enemy instanceof NIGROMANTE){
+
+    g2.setColor(new Color(120,0,200,40));
+    g2.fillOval((int)enemy.x + 32 - 250,(int)enemy.y + 32 - 250,500,500);
+    g2.setColor(new Color(180,0,255,120));
+    g2.drawOval((int)enemy.x + 32 - 250,(int)enemy.y + 32 - 250,500,500);
+}
             enemy.draw(g2);
         }
 

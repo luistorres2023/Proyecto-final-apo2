@@ -24,7 +24,12 @@ public class Tower {
     double scoreMultiplier = 1.0;
     double shootAnim = 0;
     long slowUntil = 0;
+    public long necroCurseUntil = 0;
+    public boolean necroCursed = false;
     public int skillCost;
+    public double attackMultiplier = 1.0;
+    public boolean cursed = false;
+    public long cursedUntil = 0;
     long lastSkillUse = 0;
     long skillCooldown = 20000;
     boolean rapidFire = false;
@@ -48,6 +53,13 @@ public class Tower {
 
     public void update(ArrayList<Enemy> enemies,ArrayList<Bullet> bullets) {
 
+        if(System.currentTimeMillis() < necroCurseUntil){
+
+            necroCursed = true;
+        } else {
+
+            necroCursed = false;
+        }
         animTime += 0.07;
         if(shootAnim > 0)
     shootAnim -= 0.5;
@@ -67,7 +79,7 @@ if(rapidFire &&
 
 if(System.currentTimeMillis() < slowUntil){
 
-    currentFireRate *= 2;
+    currentFireRate *= 1.4;
 }
 
 if(currentTime - lastShot < currentFireRate)
@@ -119,8 +131,22 @@ GamePanel.bulletsToAdd.add(bullet);
     if(!alive)
         return;
     int size = 64 + (int)(Math.sin(animTime) * 5) + (int)shootAnim;
+    int offset = (64 - size) / 2;
+    if(necroCursed){
 
-int offset = (64 - size) / 2;
+    g2.setColor(new Color(180,0,255,90));
+    g2.fillOval(gridX * 64 - 8,gridY * 64 - 8,80,80);
+    g2.setColor(new Color(220,120,255,200));
+    g2.drawOval(gridX * 64 - 8,gridY * 64 - 8,80,80);
+}
+if(System.currentTimeMillis() < cursedUntil){
+
+    g2.setColor(new Color(150,0,255,90));
+    g2.fillOval(x - 10,y - 10,84,84);
+
+    g2.setColor(new Color(220,120,255,220));
+    g2.drawOval(x - 10,y - 10,84,84);
+}
 
 g2.drawImage(sprite,x + offset,y + offset,size,size,null);
 if(System.currentTimeMillis() < slowUntil){

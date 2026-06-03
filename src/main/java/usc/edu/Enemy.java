@@ -10,12 +10,14 @@ public class Enemy {
     double y;
     double baseSpeed;
     int hp;
+    public double speedMultiplier = 1.0;
     int maxHp;
     double speed;
     boolean alive = true;
     boolean finished = false;
     boolean frozen = false;
     boolean burning = false;
+    boolean buffed = false;
     long burnUntil = 0;
     long nextBurnTick = 0;
     BufferedImage sprite;
@@ -129,8 +131,8 @@ public class Enemy {
     dx /= distance;
     dy /= distance;
 
-    x += dx * speed;
-    y += dy * speed;
+    x += dx * speed*speedMultiplier;
+    y += dy * speed*speedMultiplier;
 
     damageTowers();
 
