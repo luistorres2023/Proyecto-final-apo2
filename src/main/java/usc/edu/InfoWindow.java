@@ -118,9 +118,7 @@ private JScrollPane createControlsPanel() {
     JPanel panel = new JPanel(null);
     panel.setOpaque(false);
     panel.setPreferredSize(new Dimension(1600, 900));
-
     JTextArea text = new JTextArea("CONTROLES DEL JUEGO\n\n" +"COLOCACIÓN DE TORRES:\n" +"Tecla 1 - Basic Tower\n" +"Tecla 2 - Slow Tower\n" +"Tecla 3 - Magic Tower\n" +"Tecla 4 - Sniper Tower\n\n" +"HABILIDADES:\n" +"- Presiona 5 para activar el modo habilidad\n" +"- Click en una torre para seleccionarla\n" +"- Presiona 5 para salir de el modo habilidad\n");
-
     text.setFont(MedievalFont.getFont(26f));
     text.setForeground(new Color(245, 220, 160));
     text.setOpaque(false);
