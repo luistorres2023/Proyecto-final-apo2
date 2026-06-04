@@ -1,4 +1,8 @@
 con este codigo se ejecuta:
+para el juego:
+mvn compile exec:java "-Dexec.mainClass=usc.edu.Main"
+para el test:
+mvn test
 (todo lo de abajo es "innecesario" si sale error lo mas probable es que sea por estas dos lineas en game panel: 
 import main.java.usc.edu.MainMenu;
 import main.java.usc.edu.MedievalFont; simplemente se borran y ya dejo lo de abajo por si llega a ser necesario)

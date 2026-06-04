@@ -11,7 +11,7 @@ public class InfoWindow extends JFrame{
     public InfoWindow(){
 
         setTitle("Game Encyclopedia");
-        setSize(850,900);
+        setSize(1000,900);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
@@ -20,15 +20,7 @@ public class InfoWindow extends JFrame{
         tabs.setUI(new BasicTabbedPaneUI(){
 
 @Override
-protected void paintTabBackground(
-        Graphics g,
-        int tabPlacement,
-        int tabIndex,
-        int x,
-        int y,
-        int w,
-        int h,
-        boolean isSelected) {
+protected void paintTabBackground(Graphics g,int tabPlacement,int tabIndex,int x,int y,int w,int h,boolean isSelected) {
 
     if (isSelected) {
         g.setColor(new Color(120, 120, 120)); 
@@ -93,13 +85,12 @@ add(tabs,BorderLayout.CENTER);
     JPanel panel=new JPanel(null);
 
     panel.setOpaque(false);
-    panel.setPreferredSize(new Dimension(1400,2200));
+    panel.setPreferredSize(new Dimension(1600,2600));
 
-    addCard(panel,"Basic Tower","/assets/tower.png","Price: 50\nDamage: 15\nRange: 180\nAttack Speed: 0.5s\nHP: 100",80);
-    addCard(panel,"Slow Tower","/assets/tower4.png","Price: 60\nDamage: 0\nRange: 245\nAttack Speed: 1.2s\nHP: 150\nSlow enemies for five seconds",420);
-    addCard(panel,"Magic Tower","/assets/tower3.png","Price: 75\nDamage: 35\nRange: 250\nAttack Speed: 0.75s\nHP: 175",760);
-    addCard(panel,"Sniper Tower","/assets/tower2.png","Price: 100\nDamage: 60\nRange: 350\nAttack Speed: 2.5s\nHP: 250",1100);
-
+    addCard(panel,"Basic Tower","/assets/tower.png","STATS\nPrice: 50 Coins\nDamage: 15\nRange: 180\nAttack Speed: 0.5s\nHealth: 100\nABILITY\nDispara 3 veces mas rapido durante 5 segundos\nPrice Ability:\n 75 Coins\nCOOLDOWN\n20s",80);
+    addCard(panel,"Slow Tower","/assets/tower4.png","STATS\nPrice: 60 Coins\nDamage: 0\nRange: 245\nAttack Speed: 1.2s\nHealth: 150\nABILITY\nTodos los enemigos en pantalla son congelados\npor 2 segundos\nPrice Ability:\n 100 Coins\nCOOLDOWN\n20s",700);
+    addCard(panel,"Magic Tower","/assets/tower3.png","STATS\nPrice: 75 Coins\nDamage: 35\nRange: 250\nAttack Speed: 0.75s\nHealth: 175\nABILITY\nTodos los enemigos en pantalla son quemados durante\n8 segundos y si un enemigo sale al lado de uno\nquemado tiene un 10% de probabilidad de quemarse\nPrice Ability:\n 150 Coins\nCOOLDOWN\n20s",1320);
+    addCard(panel,"Sniper Tower","/assets/tower2.png","STATS\nPrice: 100 Coins\nDamage: 60\nRange: 350\nAttack Speed: 2.5s\nHealth: 250\nABILITY\nLas siguientes 4 balas que salen hacen daño en area\ny tiene un *4 de daño\nPrice:\n 175 Coins\nCOOLDOWN\n20s",1940);
     return panel;
 }
     private JPanel createEnemyPanel(){
@@ -107,14 +98,13 @@ add(tabs,BorderLayout.CENTER);
     JPanel panel=new JPanel(null);
 
     panel.setOpaque(false);
-    panel.setPreferredSize(new Dimension(1400,2200));
+    panel.setPreferredSize(new Dimension(1600,3300));
 
-    addCard(panel,"Normal Enemy","/assets/normalenemy.png","Hp: 130\nSpeed: 1.5\nDamage: 15\n Lives: -1\nReward: +5 coins",80);
-    addCard(panel,"Fast Enemy","/assets/enemy_fast.png","Hp: 40\nSpeed: 2.5\nDamage: 10\n Lives: -1\nReward: +5 coins",420);
-    addCard(panel,"Tank Enemy","/assets/enemy_tank.png","Hp: 140\nSpeed: 1.1\nDamage: 25\n Lives: -2.5\nReward: +15 coins",760);
-    addCard(panel,"Witch","/assets/witch.png","Hp: 180\nSpeed: 1.2\nDamage: 50\n Lives: -3\nReward: +30 coins\n Recupera 35HP cada 3s",1100);
-    addCard(panel,"Nigromante","/assets/nigromante.png","Hp: 6000\nSpeed: 0.9\nDamage: 100\n Lives: -10\nReward: +250 coins",1440);
-
+    addCard(panel,"Normal Enemy","/assets/normalenemy.png","STATS\nHealth: 130\nSpeed: 1.5\nTower Damage: 15\nLives Lost: 1\nReward: 5 Coins\nABILITY\nSpeed buff:\n +50% velocidad si tiene - de 30% de vida\nCOOLDOWN\nun solo uso",80);
+    addCard(panel,"Fast Enemy","/assets/enemy_fast.png","STATS\nHealth: 40\nSpeed: 2.5\nTower Damage: 10\nLives Lost: 1\nReward: 5 Coins\nABILITY\nSpeed force:\n 20% de probabilidadde esquivar una bala\nCOOLDOWN\n0.3 Segundos",700);
+    addCard(panel,"Tank Enemy","/assets/enemy_tank.png","STATS\nHealth: 140\nSpeed: 1.1\nTower Damage: 25\nLives Lost: 2.5\nReward: 15 Coins\nABILITY\nStrong armor:\n 30% de probabilidad de tener una armadura que reduce\n el daño un 60%\nCOOLDOWN\nUn solo uso",1320);
+    addCard(panel,"Witch","/assets/witch.png","STATS\nHealth: 180\nSpeed: 1.2\nTower Damage: 50\nLives Lost: 3\nReward: 30 Coins\nABILITY\nAura verde:\n +35 de vida a enemigos y a si misma\nAura morada:\n 30% de probabilidad de reelentizar por 3 segundos\nCOOLDOWN\n3 Segundos",1940);
+    addCard(panel,"Nigromante","/assets/NIGROMANTE.png","STATS\nHealth: 4000\nSpeed: 0.5\nTower Damage: 100\nLives Lost: 10\nReward: 1500 Coins\nABILITY\nAl aparecer la pantalla se llena de sombra\nTodos los enemigos quedan reelentizados por 5 seg\nAura morada:\n +velocidad a enemigos\n -40% de velocidad de disparo a torres\nSpawn:\n invoca tank enemy y una witch\nCOOLDOWN\nSpawn: 10 seg",2560);
     return panel;
 }
 
@@ -134,7 +124,7 @@ add(tabs,BorderLayout.CENTER);
 
             JLabel image=new JLabel(new ImageIcon(img.getScaledInstance(170,170,Image.SCALE_SMOOTH)));
 
-            image.setBounds(120,y+40,170,170);
+            image.setBounds(120,y+80,170,170);
 
             panel.add(image);
 
@@ -146,13 +136,18 @@ add(tabs,BorderLayout.CENTER);
 
         text.setOpaque(false);
         text.setEditable(false);
+        text.setLineWrap(true);
+        text.setWrapStyleWord(true);
         text.setForeground(new Color(245,220,160));
-        text.setFont(MedievalFont.getFont(30f));
-        text.setBounds(380,y+20,9000,2220);
+        text.setFont(MedievalFont.getFont(24f));
+        text.setBounds(390,y+60,750,720);
         JSeparator line=new JSeparator();
-
         line.setForeground(new Color(180,140,70));
-        line.setBounds(80,y+300,950,3);
+        int lineOffset = 500;
+        if(title.equals("Nigromante")){
+            lineOffset = 600;
+        }
+        line.setBounds(80,y+lineOffset,1200,3);
         panel.add(line);
         panel.add(text);
     }

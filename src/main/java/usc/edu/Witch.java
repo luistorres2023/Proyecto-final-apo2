@@ -31,20 +31,14 @@ public void update() {
     if (currentTime - lastHealTime >= healCooldown) {
 
         healNearbyEnemies();
-
-        healEffectUntil =
-            System.currentTimeMillis() + 800;
-
+        healEffectUntil =System.currentTimeMillis() + 800;
         lastHealTime = currentTime;
     }
 
     if (currentTime - lastCurseTime >= curseCooldown) {
 
         curseNearbyTowers();
-
-        curseEffectUntil =
-            System.currentTimeMillis() + 800;
-
+        curseEffectUntil =System.currentTimeMillis() + 800;
         lastCurseTime = currentTime;
     }
 }
@@ -58,11 +52,9 @@ public void update() {
 
         double dx = enemy.x - x;
         double dy = enemy.y - y;
-
         double dist = Math.sqrt(dx*dx + dy*dy);
 
         if(dist <= 150){
-
             enemy.hp += healAmount;
 
             if(enemy.hp > enemy.maxHp)
@@ -82,9 +74,7 @@ private void curseNearbyTowers(){
 
         double dx = tower.x - x;
         double dy = tower.y - y;
-
         double dist = Math.sqrt(dx*dx + dy*dy);
-
         if(dist <= 300){
             tower.slowUntil =System.currentTimeMillis() + 6000;
         }
@@ -94,18 +84,14 @@ private void curseNearbyTowers(){
 public void draw(Graphics2D g2){
 
     if(System.currentTimeMillis() < healEffectUntil){
-
         g2.setColor(new Color(0,255,0,40));
         g2.fillOval((int)x - 125,(int)y - 125,300,300);
-
         g2.setColor(new Color(0,255,0,180));
         g2.drawOval((int)x - 125,(int)y - 125,300,300);
     }
     if(System.currentTimeMillis() < curseEffectUntil){
-
     g2.setColor(new Color(180,0,255,40));
     g2.fillOval((int)x - 150,(int)y - 150,360,360);
-
     g2.setColor(new Color(180,0,255,180));
     g2.drawOval((int)x - 150,(int)y - 150,360,360);
 }

@@ -15,6 +15,7 @@ public class Enemy {
     double speed;
     boolean alive = true;
     boolean finished = false;
+    boolean escaped = false;
     boolean frozen = false;
     boolean burning = false;
     boolean buffed = false;

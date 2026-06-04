@@ -506,7 +506,7 @@ public class GamePanel extends JPanel implements Runnable, MouseListener, MouseM
             enemy.update();
 
             if (enemy.finished && enemy.alive) {
-
+                enemy.escaped = true;
                 enemy.alive = false;
 
                 if (enemy instanceof TankEnemy) {
@@ -587,12 +587,11 @@ public class GamePanel extends JPanel implements Runnable, MouseListener, MouseM
         }
     }
 
-
-    // termina la wave
     enemiesSpawned = enemiesPerWave;
 
 
 }
+    if(!enemy.escaped){
     if(enemy instanceof TankEnemy){
         money += 15;
     }
@@ -605,7 +604,8 @@ public class GamePanel extends JPanel implements Runnable, MouseListener, MouseM
     else{
         money += 5;
     }
-
+}
+    if(!enemy.escaped){
     double mult = 1.0;
 
 if(enemy.killerTower != null){
@@ -613,6 +613,7 @@ if(enemy.killerTower != null){
 }
 
 score += (int)(enemy.points * wave * mult);
+    }
 
     enemiesToRemove.add(enemy);
 }
@@ -852,8 +853,7 @@ score += (int)(enemy.points * wave * mult);
 
         if (mapImage != null) {
 
-            g2.drawImage(
-                    mapImage,
+            g2.drawImage(mapImage,
                     0,
                     0,
                     WIDTH,
