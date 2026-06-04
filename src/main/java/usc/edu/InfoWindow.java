@@ -52,6 +52,12 @@ protected void paintTabBackground(Graphics g,int tabPlacement,int tabIndex,int x
         enemyScroll.getVerticalScrollBar().setUnitIncrement(16);
         tabs.add("Towers",towerScroll);
         tabs.add("Enemies",enemyScroll);
+        JScrollPane controlsScroll = createControlsPanel();
+        controlsScroll.setBorder(null);
+        controlsScroll.setOpaque(false);
+        controlsScroll.getViewport().setOpaque(false);
+        tabs.add("Controls", controlsScroll);
+        tabs.setBackgroundAt(2, new Color(60, 60, 60));
         tabs.setBackgroundAt(0, new Color(60, 60, 60));
         tabs.setBackgroundAt(1, new Color(60, 60, 60));
         ((JScrollPane)tabs.getComponentAt(0)).setBorder(null);
@@ -106,6 +112,33 @@ add(tabs,BorderLayout.CENTER);
     addCard(panel,"Witch","/assets/witch.png","STATS\nHealth: 180\nSpeed: 1.2\nTower Damage: 50\nLives Lost: 3\nReward: 30 Coins\nABILITY\nAura verde:\n +35 de vida a enemigos y a si misma\nAura morada:\n 30% de probabilidad de reelentizar por 3 segundos\nCOOLDOWN\n3 Segundos",1940);
     addCard(panel,"Nigromante","/assets/NIGROMANTE.png","STATS\nHealth: 4000\nSpeed: 0.5\nTower Damage: 100\nLives Lost: 10\nReward: 1500 Coins\nABILITY\nAl aparecer la pantalla se llena de sombra\nTodos los enemigos quedan reelentizados por 5 seg\nAura morada:\n +velocidad a enemigos\n -40% de velocidad de disparo a torres\nSpawn:\n invoca tank enemy y una witch\nCOOLDOWN\nSpawn: 10 seg",2560);
     return panel;
+}
+private JScrollPane createControlsPanel() {
+
+    JPanel panel = new JPanel(null);
+    panel.setOpaque(false);
+    panel.setPreferredSize(new Dimension(1600, 900));
+
+    JTextArea text = new JTextArea("CONTROLES DEL JUEGO\n\n" +"COLOCACIÓN DE TORRES:\n" +"Tecla 1 - Basic Tower\n" +"Tecla 2 - Slow Tower\n" +"Tecla 3 - Magic Tower\n" +"Tecla 4 - Sniper Tower\n\n" +"HABILIDADES:\n" +"- Presiona 5 para activar el modo habilidad\n" +"- Click en una torre para seleccionarla\n" +"- Presiona 5 para salir de el modo habilidad\n");
+
+    text.setFont(MedievalFont.getFont(26f));
+    text.setForeground(new Color(245, 220, 160));
+    text.setOpaque(false);
+    text.setEditable(false);
+    text.setLineWrap(true);
+    text.setWrapStyleWord(true);
+    text.setBounds(100, 80, 900, 600);
+
+    panel.add(text);
+
+    JScrollPane scroll = new JScrollPane(panel);
+    scroll.setBorder(null);
+    scroll.setOpaque(false);
+    scroll.getViewport().setOpaque(false);
+
+    scroll.getVerticalScrollBar().setUnitIncrement(16);
+
+    return scroll;
 }
 
     private void addCard(JPanel panel,String title,String imagePath,String stats,int y){

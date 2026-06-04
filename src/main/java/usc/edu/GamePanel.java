@@ -21,7 +21,6 @@ import javax.imageio.ImageIO;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
-
 public class GamePanel extends JPanel implements Runnable, MouseListener, MouseMotionListener, KeyListener {
 
     private BufferedImage mapImage;
@@ -73,7 +72,7 @@ public class GamePanel extends JPanel implements Runnable, MouseListener, MouseM
     ArrayList<Enemy> enemiesToRemove = new ArrayList<>();
     public static ArrayList<Bullet> bulletsToAdd = new ArrayList<>();
 
-    int money =400;
+    int money =40000;
     double lives = 10;
     int maxWave = -1;
     int wave = 1;
@@ -111,6 +110,7 @@ public class GamePanel extends JPanel implements Runnable, MouseListener, MouseM
     boolean skillMode = false;
     Tower selectedPlacedTower = null;
     boolean showSkillMenu = false;
+    boolean waveReadyToAdvance = false;
     int mouseGridX;
     int mouseGridY;
 
@@ -619,47 +619,48 @@ score += (int)(enemy.points * wave * mult);
 }
 
 
-        enemies.addAll(enemiesToAdd);
-        enemies.removeAll(enemiesToRemove);
-        enemiesToAdd.clear();
-        enemiesToRemove.clear();
-        if(!nigromanteAlive && enemies.isEmpty()){
-
-    enemiesSpawned = enemiesPerWave;
-
+        if (!enemiesToAdd.isEmpty()) {
+    enemies.addAll(enemiesToAdd);
+    enemiesToAdd.clear();
 }
+        enemies.removeAll(enemiesToRemove);
+        enemiesToRemove.clear();
         enemies.removeIf(enemy -> !enemy.alive);
         towers.removeIf(tower -> !tower.alive);
         bullets.removeIf(bullet -> !bullet.active);
         bullets.addAll(bulletsToAdd);
         bulletsToAdd.clear();
 
-        if (enemiesSpawned >= enemiesPerWave && enemies.isEmpty() && enemiesToAdd.isEmpty()) {
+        if (waveReadyToAdvance && enemies.isEmpty() && enemiesToAdd.isEmpty()) {
 
-            wave++;
-            score += wave * 20;
+    wave++;
+    score += wave * 20;
 
-            if (maxWave != -1 && wave > maxWave) {
+    waveReadyToAdvance = false;  
 
-                if (lives == 10) {
-                    score += 500;
-                }
+    if (maxWave != -1 && wave > maxWave) {
 
-                GameSave.borrar();
-                saveAllData();
-                running = false;
-                JOptionPane.showMessageDialog(this, "VICTORY!");
-
-                music.stopMusic();
-                necroMusic.stop();
-                new WaveMenu();
-                music.playMusic("/assets/music/magodeoz.wav");
-                return;
-            }
-
-            enemiesPerWave += 4;
-            enemiesSpawned = 0;
+        if (lives == 10) {
+            score += 500;
         }
+
+        GameSave.borrar();
+        saveAllData();
+        running = false;
+
+        JOptionPane.showMessageDialog(this, "VICTORY!");
+
+        music.stopMusic();
+        necroMusic.stop();
+
+        new WaveMenu();
+        music.playMusic("/assets/music/magodeoz.wav");
+        return;
+    }
+
+    enemiesPerWave += 4;
+    enemiesSpawned = 0;
+}
 
         if (lives <= 0) {
 
@@ -717,9 +718,10 @@ score += (int)(enemy.points * wave * mult);
     public void spawnEnemies() {
         long currentTime = System.currentTimeMillis();
 
-        if (enemiesSpawned >= enemiesPerWave)
+        if (enemiesSpawned >= enemiesPerWave) {
+            waveReadyToAdvance = true;
             return;
-
+}
         if (currentTime - lastSpawn > 1000) {
 
             boolean spawnWitch = false;
